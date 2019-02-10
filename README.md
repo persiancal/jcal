@@ -7,3 +7,9 @@ libc implementations. Jalali calendar provides an API similar to that of libc's 
 
 Jalali calendar package consists of a library namely libjalali and two simple and easy to use terminal tools, jcal
 and jdate with functionality similar to UNIX cal and date.
+
+
+---
+
+This library was written and maintained by Ashkan Ghasemi, he passed away in an [accident](https://jadi.net/2017/10/ashkan-ghasemi/).
+Therefore there is no way to migrate the original repository to another person, so this fork is for keep the project alive.
