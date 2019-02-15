@@ -352,7 +352,11 @@ void show_cal(struct cal_layout* l,
             printf(" ");
         }
 
-        printf("%s%s%s", TERM_WHITE, cal_t[i], TERM_RESET);
+        if (l->color) {
+            printf("%s%s%s", TERM_WHITE, cal_t[i], TERM_RESET);
+        } else {
+            printf("%s", cal_t[i]);
+        }
 
         for (k=0;
              k<(cal_width - cal_tw[i] -
@@ -372,13 +376,17 @@ void show_cal(struct cal_layout* l,
 
     for (i=0; i<m->n; i++) {
         for (k=0; k<6; k++) {
-            printf("%s%s%s ", TERM_WHITE, ptr_d[k], TERM_RESET);
+            if (l->color) {
+                printf("%s%s%s ", TERM_WHITE, ptr_d[k], TERM_RESET);
+            } else {
+                printf("%s ", ptr_d[k]);
+            }
         }
 
         if (l->color)
             printf("%s%s%s", TERM_RED, ptr_d[6], TERM_RESET);
         else
-            printf("%s%s%s", TERM_WHITE, ptr_d[6], TERM_RESET);
+            printf("%s", ptr_d[6]);
 
         if (i != m->n-1) {
             for (k=0; k<l->margin; k++) {
