@@ -66,4 +66,7 @@ if test $installpyjalali = "yes"; then
 fi
 AM_CONDITIONAL([WANT_PYJALALI], [test $installpyjalali = "yes"])
 
+AC_PATH_PROG(RM, rm, $FALSE)
+RM="$RM -f"
+
 AC_OUTPUT
