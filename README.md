@@ -1,3 +1,5 @@
+![snowstorm](https://github.com/srahnama/jcal/blob/master/jcal.png?raw=true)
+
 jcal
 ====
 
