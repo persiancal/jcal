@@ -1,6 +1,8 @@
 jcal
 ====
-
+<a href="https://repology.org/project/jcal/versions">
+    <img src="https://repology.org/badge/vertical-allrepos/jcal.svg" alt="Packaging status" align="right">
+</a>
 Jalali calendar is a small and portable free software library to manipulate date and time in Jalali calendar system.
 It's written in C and has absolutely zero dependencies. It works on top of any POSIX.1-2001 (and later) compatible
 libc implementations. Jalali calendar provides an API similar to that of libc's timezone, date and time functions.
