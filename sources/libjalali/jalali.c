@@ -63,6 +63,12 @@ extern char* tzname[2];
 
 int jalali_is_jleap(int year)
 {
+    // A simple way to check if it is a leap year
+    if (year % 4 == 3){
+        return 1;
+    }
+    return 0;
+
     int pr = year;
 
     /* Shifting ``year'' with 2820 year period epoch. */
