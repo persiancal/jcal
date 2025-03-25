@@ -142,7 +142,7 @@ int jalali_is_jleap(int year)
     /*
      * Classifying year in a cycle. Assigning to one of the four partitions.
      */
-    int i;
+
     for (i=0; i<J_LI; i++)
     {
         if ((pr >= cycle_patterns[i]) && (pr < cycle_patterns[i+1]))
