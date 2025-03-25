@@ -63,6 +63,53 @@ extern char* tzname[2];
 
 int jalali_is_jleap(int year)
 {
+
+    /* Leap years from 1200 to 1299 AP */
+    int leap1200[100] = {
+        [10] = 1, [14] = 1, [18] = 1, [22] = 1, [26] = 1, [30] = 1,
+        [34] = 1, [38] = 1, [43] = 1, [47] = 1, [51] = 1, [55] = 1,
+        [59] = 1, [63] = 1, [67] = 1, [71] = 1, [76] = 1, [80] = 1,
+        [84] = 1, [88] = 1, [92] = 1, [96] = 1
+    };
+
+    /* Leap years from 1300 to 1399 AP */
+    int leap1300[100] = {
+        [0]  = 1, [4]  = 1, [9]  = 1, [13] = 1, [17] = 1, [21] = 1,
+        [25] = 1, [29] = 1, [33] = 1, [37] = 1, [42] = 1, [46] = 1,
+        [50] = 1, [54] = 1, [58] = 1, [62] = 1, [66] = 1, [70] = 1,
+        [75] = 1, [79] = 1, [83] = 1, [87] = 1, [91] = 1, [95] = 1,
+        [99] = 1
+    };
+
+    /* Leap years from 1400 to 1499 AP */
+    int leap1400[100] = {
+        [3]  = 1, [8]  = 1, [12] = 1, [16] = 1, [20] = 1, [24] = 1,
+        [28] = 1, [32] = 1, [36] = 1, [41] = 1, [45] = 1, [49] = 1,
+        [53] = 1, [57] = 1, [61] = 1, [65] = 1, [69] = 1, [74] = 1,
+        [78] = 1, [82] = 1, [86] = 1, [90] = 1, [94] = 1
+    };
+
+    int i = year % 100;
+
+    if(year >= 1200 && year <= 1299) {
+        if(leap1200[i] == 1)
+            return 1;
+        else
+            return 0;
+    } else if(year >= 1300 && year <= 1399) {
+        if(leap1300[i] == 1)
+            return 1;
+        else
+            return 0;
+    } else if(year >= 1400 && year <= 1499) {
+        if(leap1400[i] == 1)
+            return 1;
+        else
+            return 0;
+    }
+
+    /* Keeping the old algorithm as fallback */
+
     int pr = year;
 
     /* Shifting ``year'' with 2820 year period epoch. */
@@ -95,7 +142,7 @@ int jalali_is_jleap(int year)
     /*
      * Classifying year in a cycle. Assigning to one of the four partitions.
      */
-    int i;
+
     for (i=0; i<J_LI; i++)
     {
         if ((pr >= cycle_patterns[i]) && (pr < cycle_patterns[i+1]))
