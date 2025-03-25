@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #
 # autogen.sh - Tools for manipulating Jalali representation of Iranian calendar
 # and necessary conversations to Gregorian calendar.
@@ -18,8 +19,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with libjalali.  If not, see <http://www.gnu.org/licenses/>.
 #
-
-#!/bin/bash
 
 # @OPTIONS
 OPTS="anch"
