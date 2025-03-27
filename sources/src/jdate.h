@@ -103,8 +103,8 @@ Display the current date and time in the given FORMAT.\n\
   %z   +hhmm numeric time zone (e.g., +0330)\n\
   %Z   alphabetic time zone abbreviation (e.g., IRST)\n\
 \n\
-Report jdate bugs to ghassemi@ftml.net\n\
-libjalali home page: <http://savannah.nongnu.org/projects/jcal/>"
+Report jdate bugs to https://github.com/persiancal/jcal/issues\n\
+libjalali home page: <https://github.com/persiancal/jcal>"
 
 /*
  *@action_handler
