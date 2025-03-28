@@ -26,50 +26,75 @@ LONG_OPTS="nocolor,clean,help,alternative"
 
 # @USAGE
 usage() {
-	echo -e "Jalali calendar library autogen build script."
-	echo -e "usage: autogen.sh [-nch]"
-	echo -e "try \`autogen.sh --help\' for more information."
+	printf "Jalali calendar library autogen build script.
+usage: autogen.sh [-nch]
+try \`autogen.sh --help\' for more information.
+"
 }
 
 # @HELP
 help() {
-	echo -e "usage: autogen.sh [-nch]..."
-	echo -ne "Invokes GNU build system tools in order to create"
-	echo -e " necessary configuration scripts.\n"
-	echo -e "Operation modes:"
-	echo -e "  -a, --alternative\tdo not invoke autoreconf"
-	echo -e "  -n, --nocolor\t\tdisable output colors"
-	echo -ne "  -c, --clean\t\tremove all auto-generated scripts"
-	echo -e " and files from source tree"
-	echo -e "  -h, --help\t\tprint this help, then exit\n"
-	echo -e "Report bugs to <ghassemi@ftml.net>."
-	echo -e "Jalali calendar home page: <http://nongnu.org/jcal>."
+	printf "usage: autogen.sh [-nch]...
+Invokes GNU build system tools in order to create necessary configuration scripts.
+
+Operation modes:
+  -a, --alternative\tdo not invoke autoreconf
+  -n, --nocolor\t\tdisable output colors
+  -c, --clean\t\tremove all auto-generated scripts and files from source tree
+  -h, --help\t\tprint this help, then exit
+
+Report bugs to <ghassemi@ftml.net>.
+Jalali calendar home page: <http://nongnu.org/jcal>.
+"
+}
+
+# prints text in green
+print_ok() {
+	printf "%s%s%s" "$green" "$1" "$zcolor"
+}
+
+# prints text in red
+print_fail() {
+	printf "%s%s%s" "$red" "$1" "$zcolor"
 }
 
 # echoes ``ok'' if parameter is zero, ''failed'' otherwise.
 printk() {
 	if [ "$1" = "0" ]; then
-		echo -e "${green}ok${zcolor}"
+		print_ok "ok\n"
 	else
-		echo -e "${red}failed${zcolor}"
+		print_fail "failed\n"
 	fi
 	return "$1"
 }
 
+# prints text in a highlight
+print_highlight() {
+	printf "%s%s%s" "$yellow" "$1" "$zcolor"
+}
+
+# prints the value with a starting green `* `.
+print_bullet() {
+	printf "%s*%s %s" "$green" "$zcolor" "$(print_highlight "$1")"
+}
+
+# prints a red error and a following value
+print_error() {
+	printf "%serror%s: %s" "$red" "$zcolor" "$(print_highlight "$1")"
+}
+
 # performs make distclean and removes auto-generated files by GNU build system.
 clean() {
-	echo -e "${green}*${zcolor} ${yellow}cleaning source tree...${zcolor}"
+	print_bullet "cleaning source tree...\n"
 
 	# Makefile is present.
 	if test -f Makefile; then
-		echo -ne "${green}* ${zcolor}${yellow}performing distclean on"
-		echo -ne " sources if possible...${zcolor} "
+		print_bullet "performing distclean on sources if possible... "
 		make distclean >/dev/null 2>&1
 		stat=$?
 		printk "$stat"
 		if [ "$stat" != "0" ]; then
-			echo -ne "${red}error${zcolor}: cannot perform make distclean."
-			echo -e " run make distclean manually and check for erros."
+			print_error "cannot perform make distclean. run make distclean manually and check for erros.\n"
 		fi
 	fi
 
@@ -84,13 +109,14 @@ clean() {
 		"libjalali/Makefile.in" "INSTALL" )
 	for i in ${files[@]}; do
 		if [ -f "$i" ] || [ -d "$i" ]; then
-			echo -ne "${green}*${zcolor} ${yellow}deleting $i...${zcolor} "
+			print_bullet "deleting $i... "
 			rm -rf "$i"
 			printk 0
 		fi
 	done
 
-	echo -e "${green}* done${zcolor}"
+	print_bullet
+	print_ok "done\n"
 }
 
 # Setting colors to vt100 standard values, NULL if 0 gets passed to set_color()
@@ -129,17 +155,16 @@ is_present() {
 	fi
 
 	if [ "$output" = "1" ]; then
-		echo -ne "${green}*${zcolor} checking for ${yellow}${name}${zcolor}... "
+		print_bullet "checking for $name... "
 		if [ "$present" = "1" ]; then
-			echo -e "${green}yes${zcolor}"
+			print_ok "yes\n"
 		else
-			echo -e "${red}no${zcolor}"
+			print_fail "no\n"
 		fi
 	fi
 
 	if [ "$present" = "0" ] && [ "$exit" = "1" ]; then
-		echo -ne "${red}error${zcolor}: ${yellow}${name}${zcolor} was not found"
-		echo -e "on your system. autogen.sh cannot continue."
+		print_error "$name was not found on your system. autogen.sh cannot continue.\n"
 		exit 1
 	fi
 
@@ -165,7 +190,9 @@ check_services() {
 	is_present "${AUTOMAKE}" "automake" 1 1
 	AUTORECONF="$(which autoreconf 2>/dev/null)"
 	is_present "${AUTORECONF}" "autoreconf" 1 0
-	echo -e "${green}* done${zcolor}\n"
+
+	print_bullet
+	print_ok "done\n"
 }
 
 # @perform() $service $name $exit $params
@@ -181,15 +208,14 @@ perform() {
 	exit="$3"
 	params="$4"
 
-	echo -ne "${green}*${zcolor} running ${yellow}${name}${zcolor} ${cyan}${params}${zcolor}... "
+	print_bullet "running \`$name $params\`... "
 	$service $params >/dev/null 2>&1
 
 	stat="$?"
 	printk "$stat"
 
 	if [ "$stat" != "0" ]; then
-		echo -ne "${red}error${zcolor}: cannot run ${yellow}${name}${zcolor}."
-		echo -e " please run ${name} manually and check for errors."
+		print_error "cannot run \`$name\`. please run $name manually and check for errors.\n"
 	fi
 
 	if [ "$exit" = "1" ] && [ "$stat" != "0" ]; then
@@ -205,15 +231,14 @@ ALTERN="0"
 
 
 if ! which which 1>/dev/null 2>&1; then
-	echo -e "cannot find \`\`which''. autogen cannot continue."
+	printf "cannot find \`\`which''. autogen cannot continue.\n"
 	exit 1
 fi
 
 # Parsing command-line arguments
 GETOPT=$(which getopt 2>/dev/null)
 if [ -z "$GETOPT" ]; then
-	echo -ne "warning: getopt(1) was not found on your system."
-	echo -e " command line arguments will be ignored."
+	printf "warning: getopt(1) was not found on your system. command line arguments will be ignored.\n"
 else
 	TEMP=$(${GETOPT} -o ${OPTS} -l ${LONG_OPTS} -n 'autogen.sh' -- "$@")
 
@@ -247,18 +272,22 @@ check_services
 
 # alternative method.
 if [ -z "$AUTORECONF" ] || [ "$ALTERN" = "1" ]; then
-	echo -e "using alternative method: ${yellow}manual${zcolor}"
+	printf "using alternative method: "
+	print_highlight "manual\n"
+
 	perform "${LIBTOOLIZE}" "libtoolize" "1" "--force --copy --install"
 	perform "${ACLOCAL}" "aclocal" "1" "--force"
 	perform "${AUTOMAKE}" "automake" "1" "--add-missing --force-missing --copy"
 	perform "${AUTOCONF}" "autoconf" "1" "--force"
-	echo -e "${green}* done${zcolor}"
 # autoreconf method
 else
-	echo -e "using prefered method: ${yellow}autoreconf${zcolor}"
+	printf "using preferred method: "
+	print_highlight "autoreconf\n"
 	perform "${LIBTOOLIZE}" "libtoolize" "1" "--force --copy --install"
 	perform "${AUTORECONF}" "autoreconf" "1" "--force --install"
-	echo -e "${green}* done${zcolor}"
 fi
+
+print_bullet
+print_ok "done\n"
 
 exit 0
