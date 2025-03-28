@@ -34,6 +34,9 @@
 #include "../libjalali/jtime.h"
 #include "jdate.h"
 
+#ifndef HAVE_STRPTIME
+#include "strptime.c"
+#endif
 extern char* optarg;
 
 /*
