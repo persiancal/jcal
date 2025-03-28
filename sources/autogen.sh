@@ -159,21 +159,21 @@ function is_present() {
 # aclocal, libtoolize, autoconf, automake and autoreconf
 function check_services() {
 	local STAT
-	ACLOCAL="$(which aclocal 2>/dev/null)"
+	ACLOCAL="$(command -v aclocal 2>/dev/null)"
 	is_present "${ACLOCAL}" "aclocal" 1 1
 	# glibtoolize glue-patch
-	LIBTOOLIZE="$(which glibtoolize 2>/dev/null)"
+	LIBTOOLIZE="$(command -v glibtoolize 2>/dev/null)"
 	STAT=$?
 	is_present "${LIBTOOLIZE}" "glibtoolize" 1 0
 	if [ ${STAT} -ne 0 ]; then
-		LIBTOOLIZE="$(which libtoolize 2>/dev/null)"
+		LIBTOOLIZE="$(command -v libtoolize 2>/dev/null)"
 		is_present "${LIBTOOLIZE}" "libtoolize" 1 1
 	fi
-	AUTOCONF="$(which autoconf 2>/dev/null)"
+	AUTOCONF="$(command -v autoconf 2>/dev/null)"
 	is_present "${AUTOCONF}" "autoconf" 1 1
-	AUTOMAKE="$(which automake 2>/dev/null)"
+	AUTOMAKE="$(command -v automake 2>/dev/null)"
 	is_present "${AUTOMAKE}" "automake" 1 1
-	AUTORECONF="$(which autoreconf 2>/dev/null)"
+	AUTORECONF="$(command -v autoreconf 2>/dev/null)"
 	is_present "${AUTORECONF}" "autoreconf" 1 0
 	echo -e "${GREEN}* done${RESET}\n"
 }
@@ -214,14 +214,8 @@ HELP=0
 COLOR=1
 ALTERN=0
 
-which which 1>/dev/null 2>&1
-if [ $? -ne 0 ]; then
-	echo -e "cannot find \`\`which''. autogen cannot continue."
-	exit 1
-fi
-
 # Parsing command-line arguments
-GETOPT=`which getopt 2>/dev/null`
+GETOPT="$(command -v getopt 2>/dev/null)"
 if [ -z ${GETOPT} ]; then
 	echo -ne "warning: getopt(1) was not found on your system."
 	echo -e " command line arguments will be ignored."
