@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 #
 # autogen.sh - Tools for manipulating Jalali representation of Iranian calendar
 # and necessary conversations to Gregorian calendar.
