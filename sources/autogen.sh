@@ -25,14 +25,14 @@ OPTS="anch"
 LONG_OPTS="nocolor,clean,help,alternative"
 
 # @USAGE
-function usage() {
+usage() {
 	echo -e "Jalali calendar library autogen build script."
 	echo -e "usage: autogen.sh [-nch]"
 	echo -e "try \`autogen.sh --help\' for more information."
 }
 
 # @HELP
-function help() {
+help() {
 	echo -e "usage: autogen.sh [-nch]..."
 	echo -ne "Invokes GNU build system tools in order to create"
 	echo -e " necessary configuration scripts.\n"
@@ -47,7 +47,7 @@ function help() {
 }
 
 # echoes ``ok'' if parameter is zero, ''failed'' otherwise.
-function printk() {
+printk() {
 	local STAT=$1
 
 	if [ $1 -eq 0 ]; then
@@ -60,7 +60,7 @@ function printk() {
 }
 
 # performs make distclean and removes auto-generated files by GNU build system.
-function clean() {
+clean() {
 	local STAT
 	# files
 	local FUBARS=( "autom4te.cache" "Makefile.in" "m4" "aclocal.m4"
@@ -101,7 +101,7 @@ function clean() {
 }
 
 # Setting colors to vt100 standard values, NULL if 0 gets passed to set_color()
-function set_colors() {
+set_colors() {
 	local HAS_COLOR=$1
 
 	if [ ${HAS_COLOR} -eq 1 ]; then
@@ -126,7 +126,7 @@ function set_colors() {
 # $OUTPUT specifies whether is_present() should work silently or not.
 # $EXIT specifies whther is_present() should exit on the event of
 # service not found.
-function is_present() {
+is_present() {
 	local SERVICE=$1
 	local NAME=$2
 	local OUTPUT=$3
@@ -157,7 +157,7 @@ function is_present() {
 
 # Checking for tools
 # aclocal, libtoolize, autoconf, automake and autoreconf
-function check_services() {
+check_services() {
 	local STAT
 	ACLOCAL="$(which aclocal 2>/dev/null)"
 	is_present "${ACLOCAL}" "aclocal" 1 1
@@ -185,7 +185,7 @@ function check_services() {
 # $EXIT specifies whether perform() should exit on the event of
 # encoutering any errors or not.
 # $PARAMS are the parameters passed to the service.
-function perform() {
+perform() {
 	local SERVICE=$1
 	local NAME=$2
 	local EXIT=$3
