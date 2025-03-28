@@ -1,6 +1,10 @@
 ACLOCAL_AMFLAGS = -I m4
 SUBDIRS         = libjalali src man test_kit
 
+install-exec-hook::
+	@echo "make[$(MAKELEVEL)]: Running ldconfig"
+	@sudo ldconfig
+
 if WANT_PYJALALI
 install-exec-hook:
 	@echo -e "\n###########################\n"\
