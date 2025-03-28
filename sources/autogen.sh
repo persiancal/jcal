@@ -190,7 +190,6 @@ perform() {
 	local NAME=$2
 	local EXIT=$3
 	local PARAMS=$4
-	local SSTAT
 
 	echo -ne "${GREEN}*${RESET} running ${YELLOW}${NAME}${RESET} ${CYAN}${PARAMS}${RESET}... "
 	${SERVICE} ${PARAMS} >/dev/null 2>&1
@@ -258,7 +257,7 @@ check_services
 
 # alternative method.
 if [ -z "${AUTORECONF}" ] || [ ${ALTERN} -eq 1 ]; then
-	echo -e "using alternative method: ${YELLO}manual${RESET}"
+	echo -e "using alternative method: ${YELLOW}manual${RESET}"
 	perform "${LIBTOOLIZE}" "libtoolize" "1" "--force --copy --install"
 	perform "${ACLOCAL}" "aclocal" "1" "--force"
 	perform "${AUTOMAKE}" "automake" "1" "--add-missing --force-missing --copy"
