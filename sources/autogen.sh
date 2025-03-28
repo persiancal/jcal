@@ -210,12 +210,12 @@ if ! which which 1>/dev/null 2>&1; then
 fi
 
 # Parsing command-line arguments
-GETOPT=`which getopt 2>/dev/null`
+GETOPT=$(which getopt 2>/dev/null)
 if [ -z "$GETOPT" ]; then
 	echo -ne "warning: getopt(1) was not found on your system."
 	echo -e " command line arguments will be ignored."
 else
-	TEMP=`${GETOPT} -o ${OPTS} -l ${LONG_OPTS} -n 'autogen.sh' -- "$@"`
+	TEMP=$(${GETOPT} -o ${OPTS} -l ${LONG_OPTS} -n 'autogen.sh' -- "$@")
 
 	for i in $TEMP; do
 		case $i in
