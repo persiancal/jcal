@@ -210,7 +210,6 @@ function perform() {
 
 # Operation modes.
 CLEAN=0
-HELP=0
 COLOR=1
 ALTERN=0
 
@@ -221,31 +220,18 @@ if [ $? -ne 0 ]; then
 fi
 
 # Parsing command-line arguments
-GETOPT=`which getopt 2>/dev/null`
-if [ -z ${GETOPT} ]; then
-	echo -ne "warning: getopt(1) was not found on your system."
-	echo -e " command line arguments will be ignored."
-else
-	TEMP=`${GETOPT} -o ${OPTS} -l ${LONG_OPTS} -n 'autogen.sh' -- "$@"`
-
-	for i in $TEMP; do
-		case $i in
-			-c|--clean) let CLEAN=1;;
-			-n|--nocolor) let COLOR=0;;
-			-h|--help) let HELP=1;;
-			-a|--alternative) let ALTERN=1;;
-		esac
-	done
-fi
+while true; do case "$1" in
+    -n | --nocolor) let COLOR=0 && shift ;;
+    -a | --alternative) let ALTERN=1 && shift ;;
+    -c | --clean) let CLEAN=1 && shift ;;
+    -h | --help) help && exit 0 ;;
+    --) shift && break ;; # End of all options
+    -*) echo "Invalid option: $1" && help && exit 1 ;;
+    *) break ;; # No more options
+esac; done
 
 # Setting colors.
 set_colors ${COLOR}
-
-# HELP
-if [ ${HELP} -eq 1 ]; then
-	help
-	exit 0
-fi
 
 # CLEAN
 if [ ${CLEAN} -eq 1 ]; then
