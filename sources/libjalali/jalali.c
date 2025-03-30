@@ -21,7 +21,6 @@
 
 #include <stdio.h>
 #include <limits.h>
-#include <math.h>
 #include <time.h>
 #include <stdlib.h>
 #include <sys/time.h>
