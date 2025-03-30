@@ -34,57 +34,56 @@ extern "C" {
 #define LIBJALALI_VERSION "0.4.1gitd9200f"
 
 struct jtm {
-    int tm_sec;            /* Seconds. (0-59) */
-    int tm_min;            /* Minutes. (0-59) */
-    int tm_hour;           /* Hours. (0-59) */
-    int tm_mday;           /* Day of the month. (1-31) */
-    int tm_mon;            /* Month. (0-11) */
-    int tm_year;           /* Year. */
-    int tm_wday;           /* Day of the week. (0-6) */
-    int tm_yday;           /* Day in the year. (0-365) */
-    int tm_isdst;          /* Daylight saving time is in effect. */
-    long int tm_gmtoff;    /* Seconds east of UTC. */
-    const char *tm_zone;   /* Timezone abbreviation.  */
+  int tm_sec;          /* Seconds. (0-59) */
+  int tm_min;          /* Minutes. (0-59) */
+  int tm_hour;         /* Hours. (0-59) */
+  int tm_mday;         /* Day of the month. (1-31) */
+  int tm_mon;          /* Month. (0-11) */
+  int tm_year;         /* Year. */
+  int tm_wday;         /* Day of the week. (0-6) */
+  int tm_yday;         /* Day in the year. (0-365) */
+  int tm_isdst;        /* Daylight saving time is in effect. */
+  long int tm_gmtoff;  /* Seconds east of UTC. */
+  const char *tm_zone; /* Timezone abbreviation.  */
 };
 
 struct ab_jtm {
-    int ab_sec;
-    int ab_min;
-    int ab_hour;
-    int ab_days;
+  int ab_sec;
+  int ab_min;
+  int ab_hour;
+  int ab_days;
 };
 
 struct jyinfo {
-    int lf;                /* leap indicator flag */
-    int y;                 /* year */
-    int r;                 /* reamining years in grand cycle */
-    int p;                 /* passed years from grand cycle*/
-    int rl;                /* remaining leap years in grand cycle */
-    int pl;                /* passed leap years in grand cycle */
-    int apl;               /* absolute passed leaps */
+  int lf;  /* leap indicator flag */
+  int y;   /* year */
+  int r;   /* reamining years in grand cycle */
+  int p;   /* passed years from grand cycle*/
+  int rl;  /* remaining leap years in grand cycle */
+  int pl;  /* passed leap years in grand cycle */
+  int apl; /* absolute passed leaps */
 };
-
 
 /* Jalali leap year indication function. */
 extern int jalali_is_jleap(int year);
 
-extern void jalali_create_time_from_secs(time_t time, struct ab_jtm* ab_jtm);
+extern void jalali_create_time_from_secs(time_t time, struct ab_jtm *ab_jtm);
 
-extern time_t jalali_create_secs_from_time(const struct ab_jtm* ab_jtm);
+extern time_t jalali_create_secs_from_time(const struct ab_jtm *ab_jtm);
 
-extern int jalali_create_date_from_days(struct jtm* j);
+extern int jalali_create_date_from_days(struct jtm *j);
 
-extern int jalali_create_days_from_date(struct jtm* j);
+extern int jalali_create_days_from_date(struct jtm *j);
 
-extern void jalali_get_jyear_info(struct jyinfo* jyinfo);
+extern void jalali_get_jyear_info(struct jyinfo *jyinfo);
 
-extern void jalali_get_date(int p, struct jtm* jtm);
+extern void jalali_get_date(int p, struct jtm *jtm);
 
-extern int jalali_get_diff(const struct jtm* jtm);
+extern int jalali_get_diff(const struct jtm *jtm);
 
-extern void jalali_update(struct jtm* jtm);
+extern void jalali_update(struct jtm *jtm);
 
-extern void jalali_show_time(const struct jtm* j);
+extern void jalali_show_time(const struct jtm *j);
 
 extern int jalali_year_month_days(int year, int month);
 
