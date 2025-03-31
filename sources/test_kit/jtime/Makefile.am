@@ -1,6 +1,6 @@
 bin_PROGRAMS = jasctime jctime jgmtime jstrftime jstrptime jlocaltime jmktime
 
-INCLUDES = -I${top_srcdir}/libjalali
+AM_CPPFLAGS = -I${top_srcdir}/libjalali
 
 AM_CFLAGS = @CFLAGS@ -fno-inline -D_REENTRANT -Wall \
 	-O2 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
