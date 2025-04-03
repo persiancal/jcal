@@ -62,15 +62,15 @@ function printk() {
 function clean() {
 	local STAT
 	# files
+	# remove everything but `Makefile`s
 	local FUBARS=( "autom4te.cache" "Makefile.in" "m4" "aclocal.m4"
 		"configure" "config.sub" "config.guess" "config.log"
 		"config.status" "depcomp" "install-sh" "libtool" "ltmain.sh"
 		"missing" "src/Makefile.in" "man/Makefile.in"
-        "test_kit/jalali/Makefile.in" "test_kit/jalali/Makefile"
-        "test_kit/Makefile.in" "test_kit/Makefile"
-        "test_kit/jalali/.deps" "test_kit/jtime/.deps"
-        "test_kit/jtime/Makefile.in" "test_kit/jalali/Makefile"
-		"libjalali/Makefile.in" "INSTALL" )
+        "test_kit/jalali/Makefile.in" "test_kit/Makefile.in"
+		"test_kit/jalali/.deps" "test_kit/jtime/.deps"
+        "test_kit/jtime/Makefile.in" "libjalali/Makefile.in" "INSTALL"
+		"COPYING" "configure~" "libjalali/.deps" "src/.deps" )
 
 	echo -e "* cleaning source tree..."
 
