@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 #
 # Run GNU Autotool commands forcefully to regenerate stuff.
 #
