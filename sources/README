@@ -51,7 +51,7 @@ build system then keep reading.
 
 Installation
 ============
-Run ./autogen.sh to make `configure` script for you.  Then follow common
+Run ./bootstrap.sh to make `configure` script for you.  Then follow common
 package installation routine as described in INSTALL.
 
 If you want pyjalali package too, you can either pass `--enable-pyjalali`
