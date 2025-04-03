@@ -21,8 +21,8 @@
 #
 
 # @OPTIONS
-OPTS="ach"
-LONG_OPTS="clean,help,alternative"
+OPTS="ah"
+LONG_OPTS="help,alternative"
 
 # @USAGE
 function usage() {
@@ -38,8 +38,6 @@ function help() {
 	echo -e " necessary configuration scripts.\n"
 	echo -e "Operation modes:"
 	echo -e "  -a, --alternative\tdo not invoke autoreconf"
-	echo -ne "  -c, --clean\t\tremove all auto-generated scripts"
-	echo -e " and files from source tree"
 	echo -e "  -h, --help\t\tprint this help, then exit\n"
 	echo -e "Report bugs to <ghassemi@ftml.net>."
 	echo -e "Jalali calendar home page: <http://nongnu.org/jcal>."
@@ -56,46 +54,6 @@ function printk() {
 	fi
 
 	return ${STAT}
-}
-
-# performs make distclean and removes auto-generated files by GNU build system.
-function clean() {
-	local STAT
-	# files
-	# remove everything but `Makefile`s
-	local FUBARS=( "autom4te.cache" "Makefile.in" "m4" "aclocal.m4"
-		"configure" "config.sub" "config.guess" "config.log"
-		"config.status" "depcomp" "install-sh" "libtool" "ltmain.sh"
-		"missing" "src/Makefile.in" "man/Makefile.in"
-        "test_kit/jalali/Makefile.in" "test_kit/Makefile.in"
-		"test_kit/jalali/.deps" "test_kit/jtime/.deps"
-        "test_kit/jtime/Makefile.in" "libjalali/Makefile.in" "INSTALL"
-		"COPYING" "configure~" "libjalali/.deps" "src/.deps" )
-
-	echo -e "* cleaning source tree..."
-
-	# Makefile is present.
-	if test -f Makefile; then
-		echo -ne "* performing distclean on sources if possible... "
-		make distclean >/dev/null 2>&1
-		let STAT=$?
-
-		printk ${STAT}
-		if [ ${STAT} -ne 0 ]; then
-			echo -ne "error: cannot perform make distclean."
-			echo -e " run make distclean manually and check for erros."
-		fi
-	fi
-
-	for i in ${FUBARS[@]}; do
-		if [ -f $i ] || [ -d $i ]; then
-			echo -ne "* deleting $i... "
-			rm -rf $i
-			printk 0
-		fi
-	done
-
-	echo -e "* done"
 }
 
 # @is_present() $SERVICE $NAME $OUTPUT $EXIT
@@ -188,7 +146,6 @@ function perform() {
 }
 
 # Operation modes.
-CLEAN=0
 HELP=0
 ALTERN=0
 
@@ -208,7 +165,6 @@ else
 
 	for i in $TEMP; do
 		case $i in
-			-c|--clean) let CLEAN=1;;
 			-h|--help) let HELP=1;;
 			-a|--alternative) let ALTERN=1;;
 		esac
@@ -218,12 +174,6 @@ fi
 # HELP
 if [ ${HELP} -eq 1 ]; then
 	help
-	exit 0
-fi
-
-# CLEAN
-if [ ${CLEAN} -eq 1 ]; then
-	clean
 	exit 0
 fi
 
