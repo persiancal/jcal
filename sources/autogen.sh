@@ -21,24 +21,23 @@
 #
 
 # @OPTIONS
-OPTS="anch"
-LONG_OPTS="nocolor,clean,help,alternative"
+OPTS="ach"
+LONG_OPTS="clean,help,alternative"
 
 # @USAGE
 function usage() {
 	echo -e "Jalali calendar library autogen build script."
-	echo -e "usage: autogen.sh [-nch]"
+	echo -e "usage: autogen.sh [-ch]"
 	echo -e "try \`autogen.sh --help\' for more information."
 }
 
 # @HELP
 function help() {
-	echo -e "usage: autogen.sh [-nch]..."
+	echo -e "usage: autogen.sh [-ch]..."
 	echo -ne "Invokes GNU build system tools in order to create"
 	echo -e " necessary configuration scripts.\n"
 	echo -e "Operation modes:"
 	echo -e "  -a, --alternative\tdo not invoke autoreconf"
-	echo -e "  -n, --nocolor\t\tdisable output colors"
 	echo -ne "  -c, --clean\t\tremove all auto-generated scripts"
 	echo -e " and files from source tree"
 	echo -e "  -h, --help\t\tprint this help, then exit\n"
@@ -51,9 +50,9 @@ function printk() {
 	local STAT=$1
 
 	if [ $1 -eq 0 ]; then
-		echo -e "${GREEN}ok${RESET}"
+		echo -e "ok"
 	else
-		echo -e "${RED}failed${RESET}"
+		echo -e "failed"
 	fi
 
 	return ${STAT}
@@ -73,50 +72,30 @@ function clean() {
         "test_kit/jtime/Makefile.in" "test_kit/jalali/Makefile"
 		"libjalali/Makefile.in" "INSTALL" )
 
-	echo -e "${GREEN}*${RESET} ${YELLOW}cleaning source tree...${RESET}"
+	echo -e "* cleaning source tree..."
 
 	# Makefile is present.
 	if test -f Makefile; then
-		echo -ne "${GREEN}* ${RESET}${YELLOW}performing distclean on"
-		echo -ne " sources if possible...${RESET} "
+		echo -ne "* performing distclean on sources if possible... "
 		make distclean >/dev/null 2>&1
 		let STAT=$?
 
 		printk ${STAT}
 		if [ ${STAT} -ne 0 ]; then
-			echo -ne "${RED}error${RESET}: cannot perform make distclean."
+			echo -ne "error: cannot perform make distclean."
 			echo -e " run make distclean manually and check for erros."
 		fi
 	fi
 
 	for i in ${FUBARS[@]}; do
 		if [ -f $i ] || [ -d $i ]; then
-			echo -ne "${GREEN}*${RESET} ${YELLOW}deleting $i...${RESET} "
+			echo -ne "* deleting $i... "
 			rm -rf $i
 			printk 0
 		fi
 	done
 
-	echo -e "${GREEN}* done${RESET}"
-}
-
-# Setting colors to vt100 standard values, NULL if 0 gets passed to set_color()
-function set_colors() {
-	local HAS_COLOR=$1
-
-	if [ ${HAS_COLOR} -eq 1 ]; then
-		RED="\033[1;31m"
-		GREEN="\033[1;32m"
-		YELLOW="\033[1;33m"
-		CYAN="\033[1;36m"
-		RESET="\033[0m"
-	else
-		RED=""
-		GREEN=""
-		YELLOW=""
-		CYAN=""
-		RESET=""
-	fi
+	echo -e "* done"
 }
 
 # @is_present() $SERVICE $NAME $OUTPUT $EXIT
@@ -138,16 +117,16 @@ function is_present() {
 	fi
 
 	if [ ${OUTPUT} -eq 1 ]; then
-		echo -ne "${GREEN}*${RESET} checking for ${YELLOW}${NAME}${RESET}... "
+		echo -ne "* checking for ${NAME}... "
 		if [ ${PRESENT} -eq 1 ]; then
-			echo -e "${GREEN}yes${RESET}"
+			echo -e "yes"
 		else
-			echo -e "${RED}no${RESET}"
+			echo -e "no"
 		fi
 	fi
 
 	if [ ${PRESENT} -eq 0 ] && [ ${EXIT} -eq 1 ]; then
-		echo -ne "${RED}error${RESET}: ${YELLOW}${NAME}${RESET} was not found"
+		echo -ne "error: ${NAME} was not found"
 		echo -e "on your system. autogen.sh cannot continue."
 		exit 1
 	fi
@@ -175,7 +154,7 @@ function check_services() {
 	is_present "${AUTOMAKE}" "automake" 1 1
 	AUTORECONF="$(which autoreconf 2>/dev/null)"
 	is_present "${AUTORECONF}" "autoreconf" 1 0
-	echo -e "${GREEN}* done${RESET}\n"
+	echo -e "* done\n"
 }
 
 # @perform() $SERVICE $NAME $EXIT $PARAMS
@@ -192,14 +171,14 @@ function perform() {
 	local PARAMS=$4
 	local SSTAT
 
-	echo -ne "${GREEN}*${RESET} running ${YELLOW}${NAME}${RESET} ${CYAN}${PARAMS}${RESET}... "
+	echo -ne "* running ${NAME} ${PARAMS}... "
 	${SERVICE} ${PARAMS} >/dev/null 2>&1
 	let STAT=$?
 
 	printk ${STAT}
 
 	if [ ${STAT} -ne 0 ]; then
-		echo -ne "${RED}error${RESET}: cannot run ${YELLOW}${NAME}${RESET}."
+		echo -ne "error: cannot run ${NAME}."
 		echo -e " please run ${NAME} manually and check for errors."
 	fi
 
@@ -211,7 +190,6 @@ function perform() {
 # Operation modes.
 CLEAN=0
 HELP=0
-COLOR=1
 ALTERN=0
 
 which which 1>/dev/null 2>&1
@@ -231,15 +209,11 @@ else
 	for i in $TEMP; do
 		case $i in
 			-c|--clean) let CLEAN=1;;
-			-n|--nocolor) let COLOR=0;;
 			-h|--help) let HELP=1;;
 			-a|--alternative) let ALTERN=1;;
 		esac
 	done
 fi
-
-# Setting colors.
-set_colors ${COLOR}
 
 # HELP
 if [ ${HELP} -eq 1 ]; then
@@ -258,18 +232,17 @@ check_services
 
 # alternative method.
 if [ -z "${AUTORECONF}" ] || [ ${ALTERN} -eq 1 ]; then
-	echo -e "using alternative method: ${YELLO}manual${RESET}"
+	echo -e "using alternative method: manual"
 	perform "${LIBTOOLIZE}" "libtoolize" "1" "--force --copy --install"
 	perform "${ACLOCAL}" "aclocal" "1" "--force"
 	perform "${AUTOMAKE}" "automake" "1" "--add-missing --force-missing --copy"
 	perform "${AUTOCONF}" "autoconf" "1" "--force"
-	echo -e "${GREEN}* done${RESET}"
 # autoreconf method
 else
-	echo -e "using prefered method: ${YELLOW}autoreconf${RESET}"
+	echo -e "using prefered method: autoreconf"
 	perform "${LIBTOOLIZE}" "libtoolize" "1" "--force --copy --install"
 	perform "${AUTORECONF}" "autoreconf" "1" "--force --install"
-	echo -e "${GREEN}* done${RESET}"
 fi
+echo -e "* done"
 
 exit 0
