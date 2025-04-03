@@ -43,108 +43,6 @@ function help() {
 	echo -e "Jalali calendar home page: <http://nongnu.org/jcal>."
 }
 
-# echoes ``ok'' if parameter is zero, ''failed'' otherwise.
-function printk() {
-	local STAT=$1
-
-	if [ $1 -eq 0 ]; then
-		echo -e "ok"
-	else
-		echo -e "failed"
-	fi
-
-	return ${STAT}
-}
-
-# @is_present() $SERVICE $NAME $OUTPUT $EXIT
-# Checks whether a service is present on system.
-# $SERVICE is the path to service.
-# $NAME is the service name.
-# $OUTPUT specifies whether is_present() should work silently or not.
-# $EXIT specifies whther is_present() should exit on the event of
-# service not found.
-function is_present() {
-	local SERVICE=$1
-	local NAME=$2
-	local OUTPUT=$3
-	local EXIT=$4
-	local PRESENT=0
-
-	if [ -n "${SERVICE}" ]; then
-		let PRESENT=1
-	fi
-
-	if [ ${OUTPUT} -eq 1 ]; then
-		echo -ne "* checking for ${NAME}... "
-		if [ ${PRESENT} -eq 1 ]; then
-			echo -e "yes"
-		else
-			echo -e "no"
-		fi
-	fi
-
-	if [ ${PRESENT} -eq 0 ] && [ ${EXIT} -eq 1 ]; then
-		echo -ne "error: ${NAME} was not found"
-		echo -e "on your system. autogen.sh cannot continue."
-		exit 1
-	fi
-
-	return ${PRESENT}
-}
-
-# Checking for tools
-# aclocal, libtoolize, autoconf, automake and autoreconf
-function check_services() {
-	local STAT
-	ACLOCAL="$(which aclocal 2>/dev/null)"
-	is_present "${ACLOCAL}" "aclocal" 1 1
-	# glibtoolize glue-patch
-	LIBTOOLIZE="$(which glibtoolize 2>/dev/null)"
-	STAT=$?
-	is_present "${LIBTOOLIZE}" "glibtoolize" 1 0
-	if [ ${STAT} -ne 0 ]; then
-		LIBTOOLIZE="$(which libtoolize 2>/dev/null)"
-		is_present "${LIBTOOLIZE}" "libtoolize" 1 1
-	fi
-	AUTOCONF="$(which autoconf 2>/dev/null)"
-	is_present "${AUTOCONF}" "autoconf" 1 1
-	AUTOMAKE="$(which automake 2>/dev/null)"
-	is_present "${AUTOMAKE}" "automake" 1 1
-	AUTORECONF="$(which autoreconf 2>/dev/null)"
-	is_present "${AUTORECONF}" "autoreconf" 1 0
-	echo -e "* done\n"
-}
-
-# @perform() $SERVICE $NAME $EXIT $PARAMS
-# runs a service with a set of parameters.
-# $SERVICE is the path to the service.
-# $NAME is the service name.
-# $EXIT specifies whether perform() should exit on the event of
-# encoutering any errors or not.
-# $PARAMS are the parameters passed to the service.
-function perform() {
-	local SERVICE=$1
-	local NAME=$2
-	local EXIT=$3
-	local PARAMS=$4
-	local SSTAT
-
-	echo -ne "* running ${NAME} ${PARAMS}... "
-	${SERVICE} ${PARAMS} >/dev/null 2>&1
-	let STAT=$?
-
-	printk ${STAT}
-
-	if [ ${STAT} -ne 0 ]; then
-		echo -ne "error: cannot run ${NAME}."
-		echo -e " please run ${NAME} manually and check for errors."
-	fi
-
-	if [ ${EXIT} -eq 1 ] && [ ${STAT} -ne 0 ]; then
-		exit 1
-	fi
-}
-
 # Operation modes.
 HELP=0
 ALTERN=0
@@ -177,22 +75,22 @@ if [ ${HELP} -eq 1 ]; then
 	exit 0
 fi
 
-# Checking for services.
-check_services
-
-# alternative method.
-if [ -z "${AUTORECONF}" ] || [ ${ALTERN} -eq 1 ]; then
-	echo -e "using alternative method: manual"
-	perform "${LIBTOOLIZE}" "libtoolize" "1" "--force --copy --install"
-	perform "${ACLOCAL}" "aclocal" "1" "--force"
-	perform "${AUTOMAKE}" "automake" "1" "--add-missing --force-missing --copy"
-	perform "${AUTOCONF}" "autoconf" "1" "--force"
-# autoreconf method
-else
-	echo -e "using prefered method: autoreconf"
-	perform "${LIBTOOLIZE}" "libtoolize" "1" "--force --copy --install"
-	perform "${AUTORECONF}" "autoreconf" "1" "--force --install"
+libtoolize="$(command -v libtoolize || command -v glibtoolize)"
+if [ -z "$libtoolize" ]; then
+	printf "libtoolize or glibtoolize is needed and not found.
+		Add to \$PATH or use another way to bootstrap the project.\n"
+	exit 1
 fi
-echo -e "* done"
 
-exit 0
+"$libtoolize" --force --copy --install || exit 1
+if command -v autoreconf || [ "$ALTERN" = "1" ]; then
+	printf 'using autoreconf...\n'
+	autoreconf --force --install || exit 1
+	automake --add-missing --force-missing --copy || exit 1
+	autoconf --force || exit 1
+else
+	printf 'not using autoreconf...\n'
+	autoreconf --force --install || exit 1
+fi	
+
+printf "done. Read the README and INSTALL files.\n"
