@@ -30,45 +30,39 @@
 #define JCAL_VERSION "0.5.1"
 
 struct cal_layout {
-    int color;      /* If enabled, drawer tries to colorize output. */
-    int julian;     /* Displays julian days (1-366) instead of month days. */
-    int pahlavi;    /* jcal uses Pahlavi instead of Islamic epoch. */
-    int english;    /* Use Farsi transliteration for weekday names. */
-    int farsi;      /* Use Farsi utf8 names and numbers. */
-    int margin;     /* Marginal space between two cals. */
-    int syear;      /* If enabled, jcal shows year above cals. */
+  int color;   /* If enabled, drawer tries to colorize output. */
+  int julian;  /* Displays julian days (1-366) instead of month days. */
+  int pahlavi; /* jcal uses Pahlavi instead of Islamic epoch. */
+  int english; /* Use Farsi transliteration for weekday names. */
+  int farsi;   /* Use Farsi utf8 names and numbers. */
+  int margin;  /* Marginal space between two cals. */
+  int syear;   /* If enabled, jcal shows year above cals. */
 };
 
 struct cal_matrix {
-    int n;      /* Calendar numbers within matrix. */
-    int** m;    /* Calendar matrix. */
-    int width;  /* Matrix width. */
-    int height; /* Matrix height. */
+  int n;      /* Calendar numbers within matrix. */
+  int **m;    /* Calendar matrix. */
+  int width;  /* Matrix width. */
+  int height; /* Matrix height. */
 };
 
-void set_cal_matrix(struct cal_layout* l,
-                    struct jtm* ct,
-                    struct cal_matrix* mat,
-                    int prefix);
+void set_cal_matrix(struct cal_layout *l, struct jtm *ct,
+                    struct cal_matrix *mat, int prefix);
 
-int is_in_margin(struct cal_layout* l,
-                 struct cal_matrix* mat,
-                 int c);
+int is_in_margin(struct cal_layout *l, struct cal_matrix *mat, int c);
 
-void show_cal_matrix(struct cal_layout* l, struct cal_matrix* mat);
+void show_cal_matrix(struct cal_layout *l, struct cal_matrix *mat);
 
-void create_cal_matrix(struct cal_layout* l, struct cal_matrix* mat);
+void create_cal_matrix(struct cal_layout *l, struct cal_matrix *mat);
 
-void destroy_cal_matrix(struct cal_matrix* mat);
+void destroy_cal_matrix(struct cal_matrix *mat);
 
-void show_cal(struct cal_layout* l,
-              struct cal_matrix* m,
-              struct jtm** _j);
+void show_cal(struct cal_layout *l, struct cal_matrix *m, struct jtm **_j);
 
-void show_3(struct cal_layout* l, struct jtm* j);
+void show_3(struct cal_layout *l, struct jtm *j);
 
-void show_1(struct cal_layout* l, struct jtm* j);
+void show_1(struct cal_layout *l, struct jtm *j);
 
-void show_year(struct cal_layout* l, struct jtm* j);
+void show_year(struct cal_layout *l, struct jtm *j);
 
 #endif /* JCAL_H */
