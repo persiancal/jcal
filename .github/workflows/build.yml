@@ -21,6 +21,6 @@ jobs:
       - name: Build
         run: |
           cd sources
-          ./bootstrap.sh
+          ./autogen.sh
           ./configure
           make
