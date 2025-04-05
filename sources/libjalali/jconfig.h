@@ -22,16 +22,16 @@
 #ifndef JCONFIG_H
 #define JCONFIG_H
 
-#define JALALI_LEAP_BASE 475 /* Jalali 2820 year period epoch. */
+#define JALALI_LEAP_BASE 475    /* Jalali 2820 year period epoch. */
 #define JALALI_LEAP_PERIOD 2820 /* Jalali recurring pattern length. */
 
 #define JALALI_NORMAL_CYCLE_LENGTH 128 /* A normal cycle length. */
-#define JALALI_EXTRA_CYCLE_LENGTH 132 /* Last cycle length. */
+#define JALALI_EXTRA_CYCLE_LENGTH 132  /* Last cycle length. */
 
 /* Starting year of the last cycle in the period. */
 #define JALALI_LAST_CYCLE_START 2688
 
-#define J_PT0 0 /* No partitions passed. */
+#define J_PT0 0  /* No partitions passed. */
 #define J_PT1 29 /* First partition passed. 0+29 */
 #define J_PT2 62 /* Second partition passed. 0+29+33 */
 #define J_PT3 95 /* Third partition passed. 0+29+33+33 */
@@ -41,8 +41,8 @@
 #define J_L2 15
 #define J_L3 23
 
-#define J_C1 29 /* First type of partitions, 29 years in length. */
-#define J_C2 33 /* Second type of partitions, 33 years in length. */
+#define J_C1 29  /* First type of partitions, 29 years in length. */
+#define J_C2 33  /* Second type of partitions, 33 years in length. */
 #define J_C2e 37 /* Extension to the second type, only one instance. */
 
 #define J_LI 4 /* Multiples of four are leap except for zero. */
