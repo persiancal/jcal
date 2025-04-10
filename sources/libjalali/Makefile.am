@@ -19,4 +19,4 @@ includedir= $(prefix)/include/jalali
 include_HEADERS = jalali.h jtime.h jconfig.h
 INCLUDES        =  -I. -I@includedir@
 LIBS            = @LIBS@ $(THREAD_LIBS)
-AM_CFLAGS          = @CFLAGS@ -D_REENTRANT -W -Wall -O2
+AM_CFLAGS          = @CFLAGS@ -D_REENTRANT -W -Wall -O2 -D_POSIX_C_SOURCE -D_DEFAULT_SOURCE

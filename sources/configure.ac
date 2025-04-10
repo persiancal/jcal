@@ -25,7 +25,7 @@ AC_STRUCT_TIMEZONE
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_MKTIME
-AC_CHECK_FUNCS([gettimeofday localtime_r memset strcasecmp strchr strstr tzset])
+AC_CHECK_FUNCS([gettimeofday localtime_r memset strcasecmp strchr strstr tzset strptime])
 
 AC_CONFIG_FILES([Makefile
                  libjalali/Makefile
