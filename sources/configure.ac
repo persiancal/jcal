@@ -11,9 +11,6 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-AC_PATH_PROG(CP, cp, /bin/cp)
-AC_PATH_PROG(RM, rm, /bin/rm)
-AC_PATH_PROG(RMDIR, rmdir, /bin/rmdir)
 
 # Checks for header files.
 AC_CHECK_HEADERS([time.h limits.h stdlib.h string.h sys/time.h unistd.h])
@@ -65,8 +62,5 @@ if test $installpyjalali = "yes"; then
                 AM_PATH_PYTHON
 fi
 AM_CONDITIONAL([WANT_PYJALALI], [test $installpyjalali = "yes"])
-
-AC_PATH_PROG(RM, rm, $FALSE)
-RM="$RM -f"
 
 AC_OUTPUT
