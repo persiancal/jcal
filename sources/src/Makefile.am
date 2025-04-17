@@ -8,4 +8,3 @@ AM_CFLAGS = @CFLAGS@ -fno-inline -D_REENTRANT -Wall\
 jcal_SOURCES = jcal.c
 jdate_SOURCES = jdate.c
 LDADD           = ../libjalali/libjalali.la -L@libdir@
-LIBS            = @LIBS@ $(THREAD_LIBS)
