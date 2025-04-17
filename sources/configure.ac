@@ -36,36 +36,6 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
                 ])
 
-PYTHON_COMPAT=( python2.7 python2.6 )
-
-AC_ARG_ENABLE([pyjalali],
-              AC_HELP_STRING([--enbale-pyjalali], [Install Python bindings (pyjalali)]),
-              [case $enableval in
-                      yes|no) installpyjalali=$enableval ;;
-                      *) AC_MSG_ERROR([Bad value $enableval for --enable-pyjalali]) ;;
-              esac], installpyjalali="no")
-
-AC_ARG_WITH([python],
-              AC_HELP_STRING([--with-python], [Python implementation to install python bindings for]),
-              [foundimpl=0
-               withpython=$withval
-               for impl in ${PYTHON_COMPAT@<:@@@:>@}; do
-                      test "x$impl" = "x$withval" && foundimpl=1
-               done
-               test $foundimpl -eq 1 || test "x$withpython" = "xauto" || AC_MSG_ERROR([
-                      Unsupported python implementation $withval supplied by --with-python])
-               unset foundimpl], withpython="auto")
-
-if test $installpyjalali = "yes"; then
-                if test "x$withpython" == "xauto"; then
-                      AC_PATH_PROG(PYTHON, python ${PYTHON_COMPAT@<:@@@:>@} )
-                else
-                      PYTHON=$withpython
-                fi
-                AM_PATH_PYTHON
-fi
-AM_CONDITIONAL([WANT_PYJALALI], [test $installpyjalali = "yes"])
-
 AC_PATH_PROG(RM, rm, $FALSE)
 RM="$RM -f"
 

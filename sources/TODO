@@ -4,3 +4,4 @@
 * Adding support for locale-aware outputs
 to jcal and jdate.
 Hindi digits, month and weekday names.
+* Add a new Python wrapper (that does exactly that, just wrapping)

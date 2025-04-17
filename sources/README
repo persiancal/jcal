@@ -53,10 +53,3 @@ Installation
 ============
 Run ./autogen.sh to make `configure` script for you.  Then follow common
 package installation routine as described in INSTALL.
-
-If you want pyjalali package too, you can either pass `--enable-pyjalali`
-option to ./configure script or after installing libjalali use provided
-`setup.py` directly:
-
-# cd jcal/sources
-# python setup.py install
