@@ -3,7 +3,7 @@ bin_PROGRAMS = jasctime jctime jgmtime jstrftime jstrptime jlocaltime jmktime
 AM_CPPFLAGS = -I${top_srcdir}/libjalali
 
 AM_CFLAGS = @CFLAGS@ -fno-inline -Wall \
-	-O2 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 
 jasctime_SOURCES = jasctime.c
 jctime_SOURCES = jctime.c
