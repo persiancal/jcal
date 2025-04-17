@@ -2,7 +2,7 @@ bin_PROGRAMS = elc get_date get_diff jalali_update jyinfo leap sec_converter
 
 AM_CPPFLAGS = -I${top_srcdir}/libjalali
 
-AM_CFLAGS = @CFLAGS@ -fno-inline -D_REENTRANT -Wall \
+AM_CFLAGS = @CFLAGS@ -fno-inline -Wall \
 	-O2 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 
 elc_SOURCES = elc.c
