@@ -1,7 +1,5 @@
 bin_PROGRAMS = jcal jdate
 
-AM_CPPFLAGS = -I${top_srcdir} -I${top_srcdir}/libjalali -I@includedir@
-
 AM_CFLAGS = @CFLAGS@ -D_FILE_OFFSET_BITS=64 -D_TIME_BITS=64
 
 jcal_SOURCES = jcal.c
