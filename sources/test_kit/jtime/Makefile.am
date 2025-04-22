@@ -2,7 +2,7 @@ bin_PROGRAMS = jasctime jctime jgmtime jstrftime jstrptime jlocaltime jmktime
 
 AM_CPPFLAGS = -I${top_srcdir}/libjalali
 
-AM_CFLAGS = @CFLAGS@ -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+AM_CFLAGS = @CFLAGS@ -D_FILE_OFFSET_BITS=64 -D_TIME_BITS=64
 
 jasctime_SOURCES = jasctime.c
 jctime_SOURCES = jctime.c
