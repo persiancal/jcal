@@ -12,4 +12,4 @@ jyinfo_SOURCES = jyinfo.c
 leap_SOURCES = leap.c
 sec_converter_SOURCES = sec_converter.c
 
-LDADD           = ../../libjalali/libjalali.la
+LDADD = ../../libjalali/libjalali.la

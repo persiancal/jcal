@@ -12,4 +12,4 @@ jstrptime_SOURCES = jstrptime.c
 jlocaltime_SOURCES = jlocaltime.c
 jmktime_SOURCES = jmktime.c
 
-LDADD           = ../../libjalali/libjalali.la -lreadline
+LDADD = ../../libjalali/libjalali.la -lreadline

@@ -15,5 +15,5 @@ libjalali_la_SOURCES = jalali.c jtime.c
 #      example...)
 
 libjalali_la_LDFLAGS = -version-info 0:5:0
-includedir= $(prefix)/include/jalali
+includedir = $(prefix)/include/jalali
 include_HEADERS = jalali.h jtime.h jconfig.h
