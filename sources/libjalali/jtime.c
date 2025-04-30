@@ -29,36 +29,11 @@
 #include "jtime.h"
 
 const char *GMT_ZONE = "UTC";
-const char *GMT_ZONE_fa = "گرینویچ";
 const char *jalali_months[] = {
     "Farvardin", "Ordibehesht", "Khordaad", "Tir", "Mordaad", "Shahrivar",
     "Mehr",      "Aabaan",      "Aazar",    "Dey", "Bahman",  "Esfand"};
-const char *fa_jalali_months[] = {"فروردین", "اردیبهشت", "خرداد", "تیر",
-                                  "مرداد",   "شهریور",   "مهر",   "آبان",
-                                  "آذر",     "دی",       "بهمن",  "اسفند"};
-const char *jalali_months_3[] = {"Far", "Ord", "Kho", "Tir", "Mor", "Sha",
-                                 "Meh", "Aba", "Aza", "Dey", "Bah", "Esf"};
-const char *fa_jalali_months_3[] = {"فرو", "ارد", "خرد", "تیر", "مرد", "شهر",
-                                    "مهر", "آبا", "آذر", "دی ", "بهم", "اسف"};
-const char *jalali_days_fa[] = {
-    "Shanbeh",         "Yek-Shanbeh",  "Do-Shanbeh", "Seh-Shanbeh",
-    "Chahaar-Shanbeh", "Panj-Shanbeh", "Jomeh"};
-const char *fa_jalali_days[] = {"شنبه",     "یکشنبه",  "دوشنبه", "سه شنبه",
-                                "چهارشنبه", "پنجشنبه", "جمعه"};
-const char *jalali_days_3_fa[] = {"Sha", "Yek", "Dos", "Ses",
-                                  "Cha", "Pan", "Jom"};
-const char *fa_jalali_days_3[] = {"شنب", "یکش", "دوش", "سهش",
-                                  "چها", "پنج", "جمع"};
-const char *jalali_days_2_fa[] = {"Sh", "Ye", "Do", "Se", "Ch", "Pa", "Jo"};
-
-const char *fa_jalali_days_2[] = {"شن", "یک", "دو", "سه", "چه", "پن", "جم"};
-const char *jalali_days[] = {"Saturday",  "Sunday",   "Monday", "Tuesday",
-                             "Wednesday", "Thursday", "Friday"};
-const char *jalali_days_3[] = {"Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"};
-const char *jalali_days_2[] = {"Sa", "Su", "Mo", "Tu", "We", "Th", "Fr"};
-const char *farsi_digits[] = {"۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"};
-
-const char *tzname_fa[2] = {"زمان زمستانی", "زمان تابستانی"};
+const char *ab_jalali_months[] = {"Far", "Ord", "Kho", "Tir", "Mor", "Sha",
+                                  "Meh", "Aba", "Aza", "Dey", "Bah", "Esf"};
 
 static char in_buf[MAX_BUF_SIZE] = {0};
 static struct jtm in_jtm;
@@ -80,14 +55,13 @@ void in_jasctime(const struct jtm *jtm, char *buf) {
     return;
 
   if (buf) {
-    sprintf(buf, "%s %s %02d %02d:%02d:%02d %d\n",
-            jalali_days_3_fa[jtm->tm_wday], jalali_months_3[jtm->tm_mon],
-            jtm->tm_mday, jtm->tm_hour, jtm->tm_min, jtm->tm_sec, jtm->tm_year);
+    sprintf(buf, "%s %s %02d %02d:%02d:%02d %d\n", ABDOW06(jtm->tm_wday),
+            ab_jalali_months[jtm->tm_mon], jtm->tm_mday, jtm->tm_hour,
+            jtm->tm_min, jtm->tm_sec, jtm->tm_year);
   } else {
     snprintf(in_buf, MAX_BUF_SIZE, "%s %s %02d %02d:%02d:%02d %d\n",
-             jalali_days_3_fa[jtm->tm_wday], jalali_months_3[jtm->tm_mon],
-             jtm->tm_mday, jtm->tm_hour, jtm->tm_min, jtm->tm_sec,
-             jtm->tm_year);
+             ABDOW06(jtm->tm_wday), ab_jalali_months[jtm->tm_mon], jtm->tm_mday,
+             jtm->tm_hour, jtm->tm_min, jtm->tm_sec, jtm->tm_year);
   }
 }
 
@@ -249,17 +223,17 @@ size_t jstrftime(char *s, size_t max, const char *format,
       switch (format[i + 1]) {
         /* The abbreviated weekday name. */
       case 'a':
-        strncpy(buf, jalali_days_3[jtm->tm_wday], MAX_BUF_SIZE);
+        strncpy(buf, ABDOW06(jtm->tm_wday), MAX_BUF_SIZE);
         break;
 
         /* The full weekday name. */
       case 'A':
-        strncpy(buf, jalali_days[jtm->tm_wday], MAX_BUF_SIZE);
+        strncpy(buf, DOW06(jtm->tm_wday), MAX_BUF_SIZE);
         break;
 
         /* The abbreviated month name. */
       case 'b':
-        strncpy(buf, jalali_months_3[jtm->tm_mon], MAX_BUF_SIZE);
+        strncpy(buf, ab_jalali_months[jtm->tm_mon], MAX_BUF_SIZE);
         break;
 
         /* The full month name. */
@@ -274,8 +248,8 @@ size_t jstrftime(char *s, size_t max, const char *format,
       case 'c':
         tzset();
         snprintf(buf, MAX_BUF_SIZE, "%s %d %s %d %02d:%02d:%02d %s",
-                 jalali_days_3_fa[jtm->tm_wday], jtm->tm_mday,
-                 jalali_months_3[jtm->tm_mon], jtm->tm_year, jtm->tm_hour,
+                 ABDOW06(jtm->tm_wday), jtm->tm_mday,
+                 ab_jalali_months[jtm->tm_mon], jtm->tm_year, jtm->tm_hour,
                  jtm->tm_min, jtm->tm_sec, jtm->tm_zone);
         break;
 
@@ -304,60 +278,11 @@ size_t jstrftime(char *s, size_t max, const char *format,
         break;
 
         /*
-         * The preferred date and time representation in Farsi. (utf8)
-         * example: سه شنبه ۱۷ خرداد ۱۳۹۰، ساعت ۰۸:۱۹:۲۳ (IRDT)
-         */
-      case 'E':
-        tzset();
-        jalali_to_farsi(_l1, 10, 2, "۰", jtm->tm_hour);
-        jalali_to_farsi(_l2, 10, 2, "۰", jtm->tm_min);
-        jalali_to_farsi(_l3, 10, 2, "۰", jtm->tm_sec);
-        jalali_to_farsi(_la, 100, 2, "۰", jtm->tm_mday);
-        jalali_to_farsi(_lb, 100, 0, " ", jtm->tm_year);
-        snprintf(buf, MAX_BUF_SIZE, "%s %s %s %s، ساعت %s:%s:%s - %s",
-                 fa_jalali_days[jtm->tm_wday], _la,
-                 fa_jalali_months[jtm->tm_mon], _lb, _l1, _l2, _l3,
-                 (jtm->tm_zone == GMT_ZONE) ? GMT_ZONE_fa
-                                            : tzname_fa[jtm->tm_isdst]);
-
-        break;
-
-        /*
          * Equivalent to %Y-%m-%d (similar to the ISO 8601 date format).
          */
       case 'F':
         snprintf(buf, MAX_BUF_SIZE, "%d-%02d-%02d", jtm->tm_year,
                  jtm->tm_mon + 1, jtm->tm_mday);
-        break;
-
-        /* The abbreviated weekday name. (Farsi-UTF8) */
-      case 'g':
-        strncpy(buf, fa_jalali_days_3[jtm->tm_wday], MAX_BUF_SIZE);
-        break;
-
-        /* The full weekday name. (Farsi-UTF8) */
-      case 'G':
-        strncpy(buf, fa_jalali_days[jtm->tm_wday], MAX_BUF_SIZE);
-        break;
-
-        /* The abbreviated month name. (Farsi-UTF8) */
-      case 'v':
-        strncpy(buf, fa_jalali_months_3[jtm->tm_mon], MAX_BUF_SIZE);
-        break;
-
-        /* The full month name. (Farsi-UTF8) */
-      case 'V':
-        strncpy(buf, fa_jalali_months[jtm->tm_mon], MAX_BUF_SIZE);
-        break;
-
-        /* The abbreviated weekday name. (Farsi) */
-      case 'h':
-        strncpy(buf, jalali_days_3_fa[jtm->tm_wday], MAX_BUF_SIZE);
-        break;
-
-        /* The full weekday name. (Farsi) */
-      case 'q':
-        strncpy(buf, jalali_days_fa[jtm->tm_wday], MAX_BUF_SIZE);
         break;
 
         /*
@@ -418,15 +343,6 @@ size_t jstrftime(char *s, size_t max, const char *format,
         /* A newline character. */
       case 'n':
         snprintf(buf, MAX_BUF_SIZE, "\n");
-        break;
-
-        /*
-         * Either "ق.ظ" or "ب.ظ" according to the given time value.
-         * Noon is treated as "ق.ظ" and midnight as "ب.ظ".
-         */
-      case 'O':
-        snprintf(buf, MAX_BUF_SIZE, "%s",
-                 (jtm->tm_hour >= 0 && jtm->tm_hour < 12) ? "ق.ظ" : "ب.ظ");
         break;
 
         /*
@@ -518,34 +434,10 @@ size_t jstrftime(char *s, size_t max, const char *format,
         snprintf(buf, MAX_BUF_SIZE, "%d", jtm->tm_wday);
         break;
 
-        /*
-         * The preferred date representation without the time
-         * in Farsi. (utf8)
-         */
-      case 'W':
-        jalali_to_farsi(_la, 100, 0, " ", jtm->tm_year);
-        jalali_to_farsi(_l1, 10, 2, "۰", jtm->tm_mon + 1);
-        jalali_to_farsi(_l2, 10, 2, "۰", jtm->tm_mday);
-
-        snprintf(buf, MAX_BUF_SIZE, "%s/%s/%s", _la, _l1, _l2);
-        break;
-
         /* The preferred date representation without the time. */
       case 'x':
         snprintf(buf, MAX_BUF_SIZE, "%02d/%02d/%d", jtm->tm_mday,
                  jtm->tm_mon + 1, jtm->tm_year);
-        break;
-
-        /*
-         * The preferred time representation in Farsi. (utf8)
-         */
-      case 'X':
-        jalali_to_farsi(_l1, 10, 2, "۰", jtm->tm_hour);
-        jalali_to_farsi(_l2, 10, 2, "۰", jtm->tm_min);
-        jalali_to_farsi(_l3, 10, 2, "۰", jtm->tm_sec);
-
-        snprintf(buf, MAX_BUF_SIZE, "%s:%s:%s", _l1, _l2, _l3);
-
         break;
 
         /*
@@ -689,26 +581,28 @@ char *jstrptime(const char *s, const char *format, struct jtm *jtm) {
     switch (fd) {
       /* The abbreviated or full weekday name. */
     case 'a':
-    case 'A':
-      ptr = (fd == 'a') ? (char **)jalali_days_3 : (char **)jalali_days;
-      f = 0;
-
       for (k = 0; k < J_WEEK_LENGTH; k++) {
-        if (!strcasecmp(buf, ptr[k])) {
+        if (!strcasecmp(buf, ABDOW06(k))) {
           jtm->tm_wday = k;
-          f = 1;
+          break;
         }
       }
+      return (char *)&s[i];
 
-      if (!f)
-        return (char *)&s[i];
-
-      break;
+      /* The full weekday name. */
+    case 'A':
+      for (k = 0; k < J_WEEK_LENGTH; k++) {
+        if (!strcasecmp(buf, DOW06(k))) {
+          jtm->tm_wday = k;
+          break;
+        }
+      }
+      return (char *)&s[i];
 
       /* The abbreviated or full month name. */
     case 'b':
     case 'B':
-      ptr = (fd == 'b') ? (char **)jalali_months_3 : (char **)jalali_months;
+      ptr = (fd == 'b') ? (char **)ab_jalali_months : (char **)jalali_months;
       f = 0;
 
       for (k = 0; k < J_YEAR_LENGTH_IN_MONTHS; k++) {
@@ -781,24 +675,6 @@ char *jstrptime(const char *s, const char *format, struct jtm *jtm) {
       jtm->tm_year = atoi(buf);
       break;
 
-      /* The abbreviated or full weekday name. (Farsi) */
-    case 'q':
-    case 'h':
-      ptr = (fd == 'h') ? (char **)jalali_days_3_fa : (char **)jalali_days_fa;
-      f = 0;
-
-      for (k = 0; k < J_WEEK_LENGTH; k++) {
-        if (!strcasecmp(buf, ptr[k])) {
-          jtm->tm_wday = k;
-          f = 1;
-        }
-      }
-
-      if (!f)
-        return (char *)&s[i];
-
-      break;
-
     default:
       break;
     }
@@ -845,46 +721,4 @@ char *jctime_r(const time_t *timep, char *buf) {
   in_jctime(timep, buf);
 
   return buf;
-}
-
-/*
- * @Utils
- * Utility functions for internal use.
- * jalali_to_farsi() converts an integer's digits to Arabic-Indic
- * padding works just like printf() field width.
- */
-int jalali_to_farsi(char *buf, size_t n, int padding, char *pad, int d) {
-  char _buf[100] = {0};
-  int i = 0, j = 0;
-  int p = 0;
-  int c = 0;
-  int cw = (pad[0] < 0) ? 2 : 1;
-
-  for (i = d; i != 0; c++,
-      _buf[p] = farsi_digits[i % 10 > 0 ? i % 10 : -(i % 10)][1],
-      _buf[p + 1] = farsi_digits[i % 10 > 0 ? i % 10 : -(i % 10)][0], i /= 10,
-      p += 2)
-    ;
-
-  if (d < 0) {
-    _buf[p] = '-';
-    c++;
-    p++;
-  }
-
-  _buf[p] = 0;
-  buf[0] = 0;
-  i = 0;
-
-  for (i = 0; (i < (padding - c)) && (i * cw < (int)(n - 1));
-       strcat(buf, pad), i++)
-    ;
-  buf[i * cw] = 0;
-
-  for (j = 0, i *= cw; (j < p) && (i < (int)(n - 1));
-       buf[i] = _buf[p - j - 1], i++, j++)
-    ;
-  buf[i] = 0;
-
-  return i;
 }

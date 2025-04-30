@@ -4,6 +4,8 @@
 #include "jalali.h"
 
 int main(int argc, char **argv) {
+  setlocale_from_env();
+
   if (argc != 4) {
     printf("wrong arguments given\n");
     printf("usage: get_diff DAY MONTH YEAR\n");

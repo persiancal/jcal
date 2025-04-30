@@ -58,6 +58,8 @@ int mod_time(const char *path, time_t *t, int a) {
 }
 
 int main(int argc, char **argv) {
+  setlocale_from_env();
+
   int opt;
   int i;
   int err;

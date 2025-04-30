@@ -33,6 +33,48 @@ extern "C" {
 
 #define LIBJALALI_VERSION "0.5.1"
 
+#ifdef HAVE_LANGINFO_H
+#include <langinfo.h>
+#include <locale.h>
+#endif /* HAVE_LANGINFO_H */
+
+/** Set locale from the environment.
+ *
+ * In case `HAVE_LANGINFO_H` (`langinfo.h` is defined), this will set the
+ * locale, in any other case, does nothing.
+ */
+void setlocale_from_env();
+
+/** Return the day of week in a locale or English for 1 to 7 (Sun = 1).
+ *
+ * In case `HAVE_LANGINFO_H` (`langinfo.h` is defined), this will use `DAY_n`
+ * in localized context, otherwise, it's just hardcoded English days of week.
+ *
+ * @return the localized name of the day of the week or empty if not 1-7.
+ */
+char *dow(int __item);
+
+/** Return the first 3 letters of `dow` in a locale for 1 to 7 (Sun = 1).
+ *
+ * This function is exactly as `dow`, see that for more information.
+ *
+ * There is no guarantee that this will return a string equal to 3, less or
+ * more since this might be set from the locales. The user must check the length
+ * and prepare proper paddings and else when using the abbrevations. Also, this
+ * string is ASCII hence slicing into it manually may lead to invalid
+ * characters.
+ *
+ * For this very reason, there is no "3 letters only" or "2 letters only"
+ * variations of this function as before.
+ */
+char *abdow(int __item);
+
+/** Do as in `dow` but Saturday is 0 instead of 7. */
+#define DOW06(n) (dow((n == 0) ? 7 : n))
+
+/** Do as in `abdow` but Saturday is 0 instead of 7. */
+#define ABDOW06(n) (abdow((n == 0) ? 7 : n))
+
 struct jtm {
   int tm_sec;          /* Seconds. (0-59) */
   int tm_min;          /* Minutes. (0-59) */

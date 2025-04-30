@@ -5,6 +5,8 @@
 #include "jtime.h"
 
 int main(int argc, char **argv) {
+  setlocale_from_env();
+
   time_t t;
   struct jtm j;
   int mday_diff = 60;

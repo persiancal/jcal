@@ -4,6 +4,8 @@
 #include "jalali.h"
 
 int main(int argc, char **argv) {
+  setlocale_from_env();
+
   if (argc != 2) {
     printf("wrong arguments given\n");
     printf("usage: get_date DIFF_FROM_EPOCH_BY_DAYS\n");

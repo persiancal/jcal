@@ -33,8 +33,6 @@ struct cal_layout {
   int color;   /* If enabled, drawer tries to colorize output. */
   int julian;  /* Displays julian days (1-366) instead of month days. */
   int pahlavi; /* jcal uses Pahlavi instead of Islamic epoch. */
-  int english; /* Use Farsi transliteration for weekday names. */
-  int farsi;   /* Use Farsi utf8 names and numbers. */
   int margin;  /* Marginal space between two cals. */
   int syear;   /* If enabled, jcal shows year above cals. */
 };

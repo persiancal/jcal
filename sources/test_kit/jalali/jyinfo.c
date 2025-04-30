@@ -4,6 +4,8 @@
 #include "jalali.h"
 
 int main(int argc, char **argv) {
+  setlocale_from_env();
+
   struct jyinfo a;
 
   if (argc != 2) {

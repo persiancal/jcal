@@ -4,6 +4,8 @@
 #include "jalali.h"
 
 int main(int argc, char **argv) {
+  setlocale_from_env();
+
   if (argc != 3) {
     printf("wrong arguments given\n");
     printf("elc: leap counter from YEAR1 to YEAR2\n");

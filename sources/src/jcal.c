@@ -29,15 +29,6 @@
 #include "termcap.h"
 
 extern const char *jalali_months[];
-extern const char *jalali_days[];
-extern const char *jalali_days_fa[];
-extern const char *jalali_days_3[];
-extern const char *jalali_days_3_fa[];
-extern const char *jalali_days_2[];
-extern const char *jalali_days_2_fa[];
-extern const char *fa_jalali_months[];
-extern const char *fa_jalali_days_3[];
-extern const char *fa_jalali_days_2[];
 
 extern const int jalali_month_len[];
 
@@ -153,68 +144,31 @@ void show_cal_matrix(struct cal_layout *l, struct cal_matrix *mat) {
         if (mat->m[i][j] == 0)
           printf((l->julian) ? "    " : "   ");
         else if (mat->m[i][j] > 1000 && l->color) {
-          if (l->farsi) {
-            jalali_to_farsi(buf, 100, 2 + l->julian, " ", mat->m[i][j] - 1000);
-          } else {
-            snprintf(buf, 100, "%*d", 2 + l->julian, mat->m[i][j] - 1000);
-          }
-
+          snprintf(buf, 100, "%*d", 2 + l->julian, mat->m[i][j] - 1000);
           printf("%s%s%s ", TERM_BLACK_ON_WHITE, buf, TERM_RESET);
 
         } else if (mat->m[i][j] > 1000 && !l->color) {
-          if (l->farsi) {
-            jalali_to_farsi(buf, 100, 2 + l->julian, " ", mat->m[i][j] - 1000);
-          } else {
-            snprintf(buf, 100, "%*d", 2 + l->julian, mat->m[i][j] - 1000);
-          }
-
+          snprintf(buf, 100, "%*d", 2 + l->julian, mat->m[i][j] - 1000);
           printf("%s ", buf);
-
         } else {
-          if (l->farsi) {
-            jalali_to_farsi(buf, 100, 2 + l->julian, " ", mat->m[i][j]);
-          } else {
-            snprintf(buf, 100, "%*d", 2 + l->julian, mat->m[i][j]);
-          }
-
+          snprintf(buf, 100, "%*d", 2 + l->julian, mat->m[i][j]);
           printf("%s ", buf);
         }
       } else {
         if (mat->m[i][j] == 0)
           printf((l->julian) ? "   " : "  ");
         else if (mat->m[i][j] > 1000 && l->color) {
-          if (l->farsi) {
-            jalali_to_farsi(buf, 100, 2 + l->julian, " ", mat->m[i][j] - 1000);
-          } else {
-            snprintf(buf, 100, "%*d", 2 + l->julian, mat->m[i][j] - 1000);
-          }
-
+          snprintf(buf, 100, "%*d", 2 + l->julian, mat->m[i][j] - 1000);
           printf("%s%s%s", TERM_RED_ON_WHITE, buf, TERM_RESET);
 
         } else if ((mat->m[i][j] > 1000) && (!l->color)) {
-          if (l->farsi) {
-            jalali_to_farsi(buf, 100, 2 + l->julian, " ", mat->m[i][j] - 1000);
-          } else {
-            snprintf(buf, 100, "%*d", 2 + l->julian, mat->m[i][j] - 1000);
-          }
-
+          snprintf(buf, 100, "%*d", 2 + l->julian, mat->m[i][j] - 1000);
           printf("%s", buf);
         } else if (l->color) {
-          if (l->farsi) {
-            jalali_to_farsi(buf, 100, 2 + l->julian, " ", mat->m[i][j]);
-          } else {
-            snprintf(buf, 100, "%*d", 2 + l->julian, mat->m[i][j]);
-          }
-
+          snprintf(buf, 100, "%*d", 2 + l->julian, mat->m[i][j]);
           printf("%s%s%s", TERM_RED, buf, TERM_RESET);
-
         } else {
-          if (l->farsi) {
-            jalali_to_farsi(buf, 100, 2 + l->julian, " ", mat->m[i][j]);
-          } else {
-            snprintf(buf, 100, "%*d", 2 + l->julian, mat->m[i][j]);
-          }
-
+          snprintf(buf, 100, "%*d", 2 + l->julian, mat->m[i][j]);
           printf("%s", buf);
         }
       }
@@ -261,44 +215,26 @@ void destroy_cal_matrix(struct cal_matrix *mat) {
  */
 
 void show_cal(struct cal_layout *l, struct cal_matrix *m, struct jtm **_j) {
-  char **ptr_d;
-
+  int cell_width = (l->julian) ? 3 : 2;
   int i, k;
-  int cw = (l->farsi) ? 2 : 1;
-  int cal_width = (l->julian) ? 7 * 3 + 6 : 7 * 2 + 6;
+  int cal_width = 7 * cell_width + 6;
 
   char cal_t[3][MAX_BUF_SIZE];
   char cal_y[3][100];
   int cal_tw[3];
   char buf[100];
 
-  if (l->farsi)
-    ptr_d = (l->julian) ? (char **)fa_jalali_days_3 : (char **)fa_jalali_days_2;
-  else if (l->english)
-    ptr_d = (l->julian) ? (char **)jalali_days_3 : (char **)jalali_days_2;
-  else
-    ptr_d = (l->julian) ? (char **)jalali_days_3_fa : (char **)jalali_days_2_fa;
-
   for (i = 0; i < m->n; i++) {
-    if (l->farsi) {
-      jalali_to_farsi(buf, 100, 0, " ",
-                      _j[i]->tm_year +
-                          ((l->pahlavi) ? PAHLAVI_ISLAMIC_DIFF : 0));
-    } else {
-      snprintf(buf, 100, "%d",
-               _j[i]->tm_year + ((l->pahlavi) ? PAHLAVI_ISLAMIC_DIFF : 0));
-    }
-    snprintf(cal_y[i], 100, "%s%s", buf,
-             (l->pahlavi) ? ((l->farsi) ? " په" : "(pa)") : "");
+    snprintf(buf, 100, "%d",
+             _j[i]->tm_year + ((l->pahlavi) ? PAHLAVI_ISLAMIC_DIFF : 0));
+    snprintf(cal_y[i], 100, "%s%s", buf, (l->pahlavi) ? "(pa)" : "");
     buf[0] = 0;
   }
 
   for (i = 0; i < m->n; i++) {
-    snprintf(cal_t[i], MAX_BUF_SIZE, "%s %s",
-             (l->farsi) ? fa_jalali_months[_j[i]->tm_mon]
-                        : jalali_months[_j[i]->tm_mon],
+    snprintf(cal_t[i], MAX_BUF_SIZE, "%s %s", jalali_months[_j[i]->tm_mon],
              (l->syear) ? cal_y[i] : "");
-    cal_tw[i] = (cal_width - (strlen(cal_t[i]) / cw)) / 2;
+    cal_tw[i] = (cal_width - strlen(cal_t[i])) / 2;
   }
 
   for (i = 0; i < m->n; i++) {
@@ -313,7 +249,7 @@ void show_cal(struct cal_layout *l, struct cal_matrix *m, struct jtm **_j) {
     }
 
     for (k = 0; k < (cal_width - cal_tw[i] -
-                     (strlen(cal_t[i]) / cw + ((cw > 1) ? 1 : 0)));
+                     (strlen(cal_t[i]) + (/* (cw > 1) ? 1 : */ 0)));
          k++) {
       printf(" ");
     }
@@ -328,18 +264,15 @@ void show_cal(struct cal_layout *l, struct cal_matrix *m, struct jtm **_j) {
   printf("\n");
 
   for (i = 0; i < m->n; i++) {
-    for (k = 0; k < 6; k++) {
+    for (k = 0; k < 7; k++) {
+      char *s = ABDOW06(k);
       if (l->color) {
-        printf("%s%s%s ", TERM_WHITE, ptr_d[k], TERM_RESET);
+        printf("%s%*.*s%s ", k == 6 ? TERM_RED : TERM_WHITE, cell_width,
+               cell_width, s, TERM_RESET);
       } else {
-        printf("%s ", ptr_d[k]);
+        printf("%*.*s ", cell_width, cell_width, s);
       }
     }
-
-    if (l->color)
-      printf("%s%s%s", TERM_RED, ptr_d[6], TERM_RESET);
-    else
-      printf("%s", ptr_d[6]);
 
     if (i != m->n - 1) {
       for (k = 0; k < l->margin; k++) {
@@ -441,16 +374,10 @@ void show_year(struct cal_layout *l, struct jtm *j) {
   int cal_tw;
   int i;
 
-  if (l->farsi) {
-    jalali_to_farsi(buf, 100, 0, " ",
-                    j->tm_year + ((l->pahlavi) ? PAHLAVI_ISLAMIC_DIFF : 0));
-  } else {
-    snprintf(buf, 100, "%d",
-             j->tm_year + ((l->pahlavi) ? PAHLAVI_ISLAMIC_DIFF : 0));
-  }
+  snprintf(buf, 100, "%d",
+           j->tm_year + ((l->pahlavi) ? PAHLAVI_ISLAMIC_DIFF : 0));
 
-  snprintf(title, 100, "%s%s", buf,
-           (l->pahlavi) ? (l->farsi ? " پهلوی" : " (Pahlavi)") : "");
+  snprintf(title, 100, "%s%s", buf, (l->pahlavi) ? " (Pahlavi)" : "");
 
   cal_tw = (cal_width - strlen(title)) / 2;
 
@@ -488,6 +415,8 @@ void show_year(struct cal_layout *l, struct jtm *j) {
 }
 
 int main(int argc, char **argv) {
+  setlocale_from_env();
+
   struct cal_layout l;
   struct jtm j = {0};
   time_t t;
@@ -508,9 +437,7 @@ int main(int argc, char **argv) {
 
   l.color = 1;
   l.pahlavi = 0;
-  l.farsi = 0;
   l.julian = 0;
-  l.english = 0;
   l.margin = 3;
 
   /* Parsing date values. (YYYY MM DD) */
@@ -552,19 +479,9 @@ int main(int argc, char **argv) {
       l.pahlavi = 1;
       break;
 
-    case 'p':
-      l.farsi = 1;
-      l.english = 0;
-      break;
-
       /* Displays Julian days (Day of year) instead of day of month.  */
     case 'j':
       l.julian = 1;
-      break;
-
-      /* Displays English names of weekdays. */
-    case 'e':
-      l.english = 1;
       break;
 
       /* Display one-month calendar for a given date. */

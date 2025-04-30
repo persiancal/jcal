@@ -45,6 +45,69 @@
     }                                                                          \
   }
 
+/** Set locale from the environment.
+ *
+ * In case `HAVE_LANGINFO_H` (`langinfo.h` is defined), this will set the
+ * locale, in any other case, does nothing.
+ */
+void setlocale_from_env() {
+#ifdef HAVE_LANGINFO_H
+  setlocale(LC_ALL, "");
+#endif /* HAVE_LANGINFO_H */
+}
+
+char *abdow(int __item) {
+#ifdef HAVE_LANGINFO_H
+#define __CASE_NL(n, fallback)                                                 \
+  case n:                                                                      \
+    return nl_langinfo(ABDAY_##n)
+#else /* !HAVE_LANGINFO_H */
+#define __CASE_NL(n, fallback)                                                 \
+  case n:                                                                      \
+    return (char *)fallback
+#endif /* HAVE_LANGINFO_H */
+
+  switch (__item) {
+    __CASE_NL(1, "Sun");
+    __CASE_NL(2, "Mon");
+    __CASE_NL(3, "Tue");
+    __CASE_NL(4, "Wed");
+    __CASE_NL(5, "Thu");
+    __CASE_NL(6, "Fri");
+    __CASE_NL(7, "Sat");
+  default:
+    return (char *)"";
+  }
+
+#undef __CASE_NL
+}
+
+char *dow(int __item) {
+#ifdef HAVE_LANGINFO_H
+#define __CASE_NL(n, fallback)                                                 \
+  case n:                                                                      \
+    return nl_langinfo(DAY_##n)
+#else /* !HAVE_LANGINFO_H */
+#define __CASE_NL(n, fallback)                                                 \
+  case n:                                                                      \
+    return (char *)fallback
+#endif /* HAVE_LANGINFO_H */
+
+  switch (__item) {
+    __CASE_NL(1, "Sunday");
+    __CASE_NL(2, "Monday");
+    __CASE_NL(3, "Tuesday");
+    __CASE_NL(4, "Wednesday");
+    __CASE_NL(5, "Thursday");
+    __CASE_NL(6, "Friday");
+    __CASE_NL(7, "Saturday");
+  default:
+    return (char *)"";
+  }
+
+#undef __CASE_NL
+}
+
 const int cycle_patterns[] = {J_PT0, J_PT1, J_PT2, J_PT3, INT_MAX};
 const int leaps[] = {J_L0, J_L1, J_L2, J_L3, INT_MAX};
 

@@ -8,6 +8,8 @@
 #include "jtime.h"
 
 int main() {
+  setlocale_from_env();
+
   char *s;
   char *fmt;
   s = readline("string > ");

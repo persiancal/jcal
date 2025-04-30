@@ -5,6 +5,8 @@
 #include "jtime.h"
 
 int main() {
+  setlocale_from_env();
+
   time_t ltime;
   time(&ltime);
   struct ab_jtm a;
