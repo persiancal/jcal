@@ -16,11 +16,11 @@ fi
 if command -v autoreconf; then
     printf 'using autoreconf...\n'
     autoreconf --force --install || exit 1
-    automake --add-missing --force-missing --copy || exit 1
-    autoconf --force || exit 1
 else
     printf 'not using autoreconf...\n'
-    autoreconf --force --install || exit 1
+    aclocal --force || exit 1
+    automake --add-missing --force-missing --copy || exit 1
+    autoconf --force || exit 1
 fi
 
 printf "done. Read the README and INSTALL files.\n"
