@@ -3,7 +3,7 @@
 
 AC_INIT([jcal], [0.5.1], [https://github.com/persiancal/jcal])
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([foreign])
 AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 
