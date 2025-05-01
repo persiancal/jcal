@@ -96,7 +96,6 @@ void in_jlocaltime(const time_t *timep, struct jtm *result) {
     return;
 
   struct tm t;
-  struct jtm c_jtm;
   struct ab_jtm ab;
   long int gmtoff;
   time_t c;
@@ -112,24 +111,23 @@ void in_jlocaltime(const time_t *timep, struct jtm *result) {
   gettimeofday(&tv, &tz);
   gmtoff = (-tz.tz_minuteswest) * J_MINUTE_LENGTH_IN_SECONDS +
            (tz.tz_dsttime * J_HOUR_LENGTH_IN_SECONDS);
-  c_jtm.tm_zone = tzname[t.tm_isdst];
+  result->tm_zone = tzname[t.tm_isdst];
 #else
   gmtoff = t.tm_gmtoff;
-  c_jtm.tm_zone = t.tm_zone;
+  result->tm_zone = t.tm_zone;
 #endif
 
   c = (*timep) + (time_t)gmtoff;
 
   jalali_create_time_from_secs(c, &ab);
-  jalali_get_date(ab.ab_days, &c_jtm);
-  jalali_create_date_from_days(&c_jtm);
-  c_jtm.tm_sec = ab.ab_sec;
-  c_jtm.tm_min = ab.ab_min;
-  c_jtm.tm_hour = ab.ab_hour;
-  c_jtm.tm_isdst = t.tm_isdst;
+  jalali_get_date(ab.ab_days, result);
+  jalali_create_date_from_days(result);
+  result->tm_sec = ab.ab_sec;
+  result->tm_min = ab.ab_min;
+  result->tm_hour = ab.ab_hour;
+  result->tm_isdst = t.tm_isdst;
 
-  c_jtm.tm_gmtoff = gmtoff;
-  memcpy(result ? result : &in_jtm, &c_jtm, sizeof(struct jtm));
+  result->tm_gmtoff = gmtoff;
 }
 
 void in_jctime(const time_t *timep, char *buf) {
@@ -147,7 +145,6 @@ void in_jgmtime(const time_t *timep, struct jtm *result) {
     return;
 
   struct tm t;
-  struct jtm c_jtm;
   struct ab_jtm ab;
   time_t c;
   tzset();
@@ -156,17 +153,15 @@ void in_jgmtime(const time_t *timep, struct jtm *result) {
   c = *timep;
 
   jalali_create_time_from_secs(c, &ab);
-  jalali_get_date(ab.ab_days, &c_jtm);
-  jalali_create_date_from_days(&c_jtm);
-  c_jtm.tm_sec = ab.ab_sec;
-  c_jtm.tm_min = ab.ab_min;
-  c_jtm.tm_hour = ab.ab_hour;
-  c_jtm.tm_isdst = 0;
+  jalali_get_date(ab.ab_days, result);
+  jalali_create_date_from_days(result);
+  result->tm_sec = ab.ab_sec;
+  result->tm_min = ab.ab_min;
+  result->tm_hour = ab.ab_hour;
+  result->tm_isdst = 0;
 
-  c_jtm.tm_zone = GMT_ZONE;
-  c_jtm.tm_gmtoff = 0;
-
-  memcpy(result ? result : &in_jtm, &c_jtm, sizeof(struct jtm));
+  result->tm_zone = GMT_ZONE;
+  result->tm_gmtoff = 0;
 }
 
 char *jasctime(const struct jtm *jtm) {
@@ -190,7 +185,7 @@ char *jctime(const time_t *timep) {
 struct jtm *jgmtime(const time_t *timep) {
   if (!timep)
     return 0;
-  in_jgmtime(timep, 0);
+  in_jgmtime(timep, &in_jtm);
 
   return &in_jtm;
 }
@@ -199,7 +194,7 @@ struct jtm *jlocaltime(const time_t *timep) {
   if (!timep)
     return 0;
 
-  in_jlocaltime(timep, 0);
+  in_jlocaltime(timep, &in_jtm);
 
   return &in_jtm;
 }
@@ -627,7 +622,6 @@ char *jstrptime(const char *s, const char *format, struct jtm *jtm) {
   int i, j, k, f, c = 0;
   char fd;
 
-  struct jtm _j;
   time_t t;
 
   s_s = strlen(s);
@@ -755,8 +749,7 @@ char *jstrptime(const char *s, const char *format, struct jtm *jtm) {
       /* Seconds since epoch. (1970/1/1) */
     case 's':
       t = (time_t)atol(buf);
-      jlocaltime_r(&t, &_j);
-      memcpy(jtm, &_j, sizeof(struct jtm));
+      jlocaltime_r(&t, jtm);
       break;
 
       /* The second as a decimal number (range 00 to 59). */
