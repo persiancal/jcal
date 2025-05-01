@@ -59,7 +59,6 @@ int mod_time(const char *path, time_t *t, int a) {
 
 int main(int argc, char **argv) {
   int opt;
-  int i;
   int err;
   int option_index;
 
@@ -116,6 +115,7 @@ int main(int argc, char **argv) {
     case 'g':
       action.gregorian = 1;
       action.gregorian_ptr = optarg;
+      action.utc = 1;
       break;
 
       /* convert a gregorian date to jalali. */
@@ -167,7 +167,7 @@ int main(int argc, char **argv) {
    * are separated using a semicolon. ';'
    * e.g. "%Y/%m/%d %H:%M:%S;1390/03/06 18:35:41"
    */
-  for (i = 1; i < argc; i++) {
+  for (int i = 1; i < argc; i++) {
     if (argv[i][0] == '+') {
       action.format = 1;
       action.format_ptr = &argv[i][1];
@@ -196,7 +196,9 @@ int main(int argc, char **argv) {
       exit(EXIT_FAILURE);
     }
 
-    jalali_update(&j);
+    setenv("TZ", "Etc/UTC", 1);
+    tzset();
+
     j.tm_hour = 0;
     j.tm_min = 0;
     j.tm_sec = 0;

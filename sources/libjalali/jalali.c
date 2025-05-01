@@ -66,8 +66,8 @@ extern char *tzname[2];
  */
 int jalali_is_jleap(int year) {
   int mod = year % 33;
-  return (mod == 1 || mod == 5 || mod == 9 || mod == 13 ||
-          mod == 17 || mod == 22 || mod == 26 || mod == 30);
+  return (mod == 1 || mod == 5 || mod == 9 || mod == 13 || mod == 17 ||
+          mod == 22 || mod == 26 || mod == 30);
 }
 
 /*
@@ -253,40 +253,26 @@ void jalali_get_date(int p, struct jtm *j) {
  */
 int jalali_get_diff(const struct jtm *j) {
   int p = 0;
-  int i;
-  int s, sd;
-  int e, ed;
-  int f = 1;
 
-  if (j->tm_yday > 365 || j->tm_yday < 0)
-    return -1;
-
-  if (j->tm_year == J_UTC_EPOCH_YEAR) {
-    p = j->tm_yday - J_UTC_EPOCH_DIFF;
-    return p;
-  } else if (j->tm_year > J_UTC_EPOCH_YEAR) {
-    s = J_UTC_EPOCH_YEAR + 1;
-    sd = J_UTC_EPOCH_DIFF;
-    e = j->tm_year - 1;
-    ed = j->tm_yday + 1;
+  if (j->tm_year >= J_UTC_EPOCH_YEAR) {
+    for (int i = J_UTC_EPOCH_YEAR; i < j->tm_year; i++) {
+      p += jalali_is_jleap(i) ? JALALI_LEAP_YEAR_LENGTH_IN_DAYS
+                              : JALALI_NORMAL_YEAR_LENGTH_IN_DAYS;
+    }
+    if (j->tm_yday > J_UTC_EPOCH_DIFF)
+      p += j->tm_yday - J_UTC_EPOCH_DIFF;
+    else
+      p -= J_UTC_EPOCH_DIFF - j->tm_yday;
   } else {
-    f = -1;
-    s = j->tm_year + 1;
-    sd = j->tm_yday;
-    e = J_UTC_EPOCH_YEAR - 1;
-    ed = J_UTC_EPOCH_DIFF + 1;
+    for (int i = j->tm_year; i < J_UTC_EPOCH_YEAR; i++) {
+      p -= jalali_is_jleap(i) ? JALALI_LEAP_YEAR_LENGTH_IN_DAYS
+                              : JALALI_NORMAL_YEAR_LENGTH_IN_DAYS;
+    }
+    if (j->tm_yday < J_UTC_EPOCH_DIFF)
+      p -= J_UTC_EPOCH_DIFF - j->tm_yday;
+    else
+      p += j->tm_yday - J_UTC_EPOCH_DIFF;
   }
-
-  for (i = s; i <= e; i++) {
-    p += jalali_is_jleap(i) ? JALALI_LEAP_YEAR_LENGTH_IN_DAYS
-                            : JALALI_NORMAL_YEAR_LENGTH_IN_DAYS;
-  }
-
-  int r = jalali_is_jleap(s) ? JALALI_LEAP_YEAR_LENGTH_IN_DAYS - sd - 1
-                             : JALALI_NORMAL_YEAR_LENGTH_IN_DAYS - sd - 1;
-
-  p += r + ed;
-  p *= f;
 
   return p;
 }
