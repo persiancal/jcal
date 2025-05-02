@@ -31,6 +31,7 @@
 #include <time.h>
 
 #include "../libjalali/jalali.h"
+#include "../libjalali/jconfig.h"
 #include "../libjalali/jtime.h"
 #include "jdate.h"
 
@@ -122,6 +123,7 @@ int main(int argc, char **argv) {
     case 'j':
       action.jalali = 1;
       action.jalali_ptr = optarg;
+      action.utc = 1;
       break;
 
       /*
@@ -178,26 +180,52 @@ int main(int argc, char **argv) {
    *@action_handlers
    */
   if (action.jalali) {
+    setenv("TZ", "Etc/UTC", 1);
+    tzset();
+
     if (!strptime(action.jalali_ptr, "%Y/%m/%d", &g)) {
       fprintf(stderr, "Specify gregorian date in the following format\n");
       fprintf(stderr, "%%Y/%%m/%%d e.g. 2011/06/15\n");
       exit(EXIT_FAILURE);
     }
+    if (g.tm_year < 0) {
+      // We handle the years before 1900 manually bc of mktime
+      int inital_tm_mon = g.tm_mon;
+      int year = g.tm_year + 1900;
+      int day = g.tm_mday;
 
-    g.tm_hour = 0;
-    g.tm_min = 0;
-    g.tm_sec = 0;
+      // Calculate the number of seconds in the days of the months
+      t = 0;
+      g = *gmtime(&t);
 
-    t = mktime(&g);
+      g.tm_mon = inital_tm_mon;
+      t = mktime(&g);
+
+      // Calculate the number of seconds in the days
+      t += (day - 1) * G_DAY_LENGTH_IN_SECONDS;
+
+      // Calculate the number of seconds in the years
+      for (int i = year; i < 1970; i++) {
+        t -= (gregorian_is_gleap(i) ? GREGORIAN_LEAP_YEAR_LENGTH_IN_DAYS
+                                    : GREGORIAN_NORMAL_YEAR_LENGTH_IN_DAYS) *
+             G_DAY_LENGTH_IN_SECONDS;
+      }
+    } else { // for years after 1900
+      g.tm_hour = 0;
+      g.tm_min = 0;
+      g.tm_sec = 0;
+
+      t = mktime(&g);
+    }
   } else if (action.gregorian) {
+    setenv("TZ", "Etc/UTC", 1);
+    tzset();
+
     if (!jstrptime(action.gregorian_ptr, "%Y/%m/%d", &j)) {
       fprintf(stderr, "Specify jalali date in the following format\n");
       fprintf(stderr, "%%Y/%%m/%%d e.g. 1390/03/25\n");
       exit(EXIT_FAILURE);
     }
-
-    setenv("TZ", "Etc/UTC", 1);
-    tzset();
 
     j.tm_hour = 0;
     j.tm_min = 0;

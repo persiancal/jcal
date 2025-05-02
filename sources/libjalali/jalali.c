@@ -70,6 +70,9 @@ int jalali_is_jleap(int year) {
           mod == 22 || mod == 26 || mod == 30);
 }
 
+int gregorian_is_gleap(int year) {
+  return (year % 4 == 0) && !(year % 100 == 0 && year % 400 != 0);
+}
 /*
  * Creates absolute values for day, hour, minute and seconds from time_t.
  * Values are signed integers.
@@ -79,13 +82,7 @@ void jalali_create_time_from_secs(time_t t, struct ab_jtm *d) {
                         : ((t - (time_t)J_DAY_LENGTH_IN_SECONDS + (time_t)1) /
                            (time_t)J_DAY_LENGTH_IN_SECONDS);
 
-  if (t >= 0) {
-    t %= (time_t)J_DAY_LENGTH_IN_SECONDS;
-  } else {
-    t = (J_DAY_LENGTH_IN_SECONDS -
-         (abs(t - J_DAY_LENGTH_IN_SECONDS) % J_DAY_LENGTH_IN_SECONDS)) %
-        J_DAY_LENGTH_IN_SECONDS;
-  }
+  t %= (time_t)J_DAY_LENGTH_IN_SECONDS;
 
   d->ab_hour = t / J_HOUR_LENGTH_IN_SECONDS;
   t %= J_HOUR_LENGTH_IN_SECONDS;

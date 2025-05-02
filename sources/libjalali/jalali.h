@@ -67,6 +67,8 @@ struct jyinfo {
 /* Jalali leap year indication function. */
 extern int jalali_is_jleap(int year);
 
+extern int gregorian_is_gleap(int year);
+
 extern void jalali_create_time_from_secs(time_t time, struct ab_jtm *ab_jtm);
 
 extern time_t jalali_create_secs_from_time(const struct ab_jtm *ab_jtm);

@@ -146,13 +146,11 @@ void in_jgmtime(const time_t *timep, struct jtm *result) {
   if (!timep)
     return;
 
-  struct tm t;
   struct jtm c_jtm;
   struct ab_jtm ab;
   time_t c;
   tzset();
 
-  gmtime_r(timep, &t);
   c = *timep;
 
   jalali_create_time_from_secs(c, &ab);
