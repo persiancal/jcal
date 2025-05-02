@@ -31,6 +31,8 @@ extern "C" {
 
 #define MAX_BUF_SIZE 2048
 
+extern int is_number_str(const char *p);
+
 extern char *jasctime(const struct jtm *jtm);
 
 extern char *jctime(const time_t *timep);
@@ -55,6 +57,10 @@ extern struct jtm *jgmtime_r(const time_t *timep, struct jtm *result);
 extern struct jtm *jlocaltime_r(const time_t *timep, struct jtm *result);
 
 extern int jalali_to_farsi(char *buf, size_t n, int padding, char *pad, int d);
+
+#define STR_IS_NUMBER(buf)                                                     \
+  if (!is_number_str(buf))                                                     \
+  return NULL
 
 #ifdef __cplusplus
 }

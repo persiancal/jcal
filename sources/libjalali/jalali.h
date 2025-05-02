@@ -89,6 +89,12 @@ extern void jalali_show_time(const struct jtm *j);
 
 extern int jalali_year_month_days(int year, int month);
 
+extern int compute_jdn(int year, int month, int day);
+
+extern int is_valid_jalali(int year, int month, int day);
+
+extern int is_valid_gregorian(int year, int month, int day);
+
 #ifdef __cplusplus
 }
 #endif

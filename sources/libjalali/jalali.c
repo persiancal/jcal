@@ -65,6 +65,12 @@ extern char *tzname[2];
  * https://www.wikifunctions.org/view/en/Z11014
  */
 int jalali_is_jleap(int year) {
+  // handle the only leap year before 9 that the algorithm can't figure out
+  if (year <= 5) {
+    int mod = year % 4;
+    return (mod == 0);
+  }
+
   int mod = year % 33;
   return (mod == 1 || mod == 5 || mod == 9 || mod == 13 || mod == 17 ||
           mod == 22 || mod == 26 || mod == 30);
@@ -336,4 +342,60 @@ void jalali_show_time(const struct jtm *j) {
          j->tm_mday, j->tm_hour, j->tm_min, j->tm_sec, j->tm_wday);
   printf(" yday: %d, dst: %d, off: %ld, zone: %s\n", j->tm_yday, j->tm_isdst,
          j->tm_gmtoff, j->tm_zone);
+}
+
+// AI generated code >>
+/* Julian Day Number (JDN) calculation for Gregorian calendar
+Formula from Jean Meeus' "Astronomical Algorithms" */
+int compute_jdn(int year, int month, int day) {
+  /* Magic numbers explanation:
+     - 4800: Year adjustment for algorithm's epoch
+     - 14/12: Converts month to March-based year (0=Mar, 11=Feb)
+     - 153: Days in 5 months (30.6 average) for March-based calendar
+     - 32045: JDN offset for Gregorian calendar alignment */
+  int a = (14 - month) / 12;  // March-based year adjustment (0 or 1)
+  int y = year + 4800 - a;    // Adjusted year for algorithm
+  int m = month + 12 * a - 3; // Convert month to March-based (0-11)
+
+  return day + (153 * m + 2) / 5 // Day count from March-based months
+         + 365 * y               // Add non-leap days
+         + y / 4                 // Julian leap years
+         - y / 100               // Gregorian century adjustment
+         + y / 400               // Gregorian leap year exception
+         - 32045;                // Offset to match Gregorian JDN
+}
+// << AI generated code
+
+int is_valid_jalali(int year, int month, int day) {
+  if (month < 1 || month > 12)
+    return 0;
+  if (day < 1)
+    return 0;
+  int days_in_month;
+  if (month <= 6)
+    days_in_month = 31;
+  else if (month <= 11)
+    days_in_month = 30;
+  else
+    days_in_month = jalali_is_jleap(year) ? 30 : 29;
+  return day <= days_in_month;
+}
+
+int is_valid_gregorian(int year, int month, int day) {
+  if (month < 1 || month > 12)
+    return 0;
+  if (day < 1)
+    return 0;
+  int days_in_month;
+  if (month == 2) {
+    if (gregorian_is_gleap(year))
+      days_in_month = 29;
+    else
+      days_in_month = 28;
+  } else if (month == 4 || month == 6 || month == 9 || month == 11) {
+    days_in_month = 30;
+  } else {
+    days_in_month = 31;
+  }
+  return day <= days_in_month;
 }

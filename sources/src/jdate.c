@@ -183,34 +183,38 @@ int main(int argc, char **argv) {
     setenv("TZ", "Etc/UTC", 1);
     tzset();
 
-    if (!strptime(action.jalali_ptr, "%Y/%m/%d", &g)) {
-      fprintf(stderr, "Specify gregorian date in the following format\n");
-      fprintf(stderr, "%%Y/%%m/%%d e.g. 2011/06/15\n");
+    char *endptr_j = strptime(action.jalali_ptr, "%Y/%m/%d", &g);
+
+    int gy = g.tm_year + 1900;
+    int gm = g.tm_mon + 1;
+    int gd = g.tm_mday;
+
+    if (!endptr_j || *endptr_j != '\0' || !is_valid_gregorian(gy, gm, gd)) {
+      fprintf(stderr,
+              "Specify a Gregorian date that exists, in the following format:\n"
+              "%%Y/%%m/%%d e.g. 1366/04/17\n");
       exit(EXIT_FAILURE);
     }
-    if (g.tm_year < 0) {
-      // We handle the years before 1900 manually bc of mktime
-      int inital_tm_mon = g.tm_mon;
-      int year = g.tm_year + 1900;
-      int day = g.tm_mday;
 
-      // Calculate the number of seconds in the days of the months
-      t = 0;
-      g = *gmtime(&t);
+    if (g.tm_year < 0) {         // Handle dates before 1900
+      int gy = g.tm_year + 1900; // tm_year: years since 1900
+      int gm = g.tm_mon + 1;     // tm_mon: 0-11 → 1-12
+      int gd = g.tm_mday;
 
-      g.tm_mon = inital_tm_mon;
-      t = mktime(&g);
+      /* JDN calculation avoids system-specific mktime limitations
+         by using pure mathematical conversion */
+      int jdn = compute_jdn(gy, gm, gd);
 
-      // Calculate the number of seconds in the days
-      t += (day - 1) * G_DAY_LENGTH_IN_SECONDS;
+      /* Epoch reference points:
+         - Unix epoch: 1970-01-01 = JDN 2440588
+         - 86400 seconds/day (24 * 60 * 60) */
+      const long epoch_jdn = 2440588;
+      long delta_days = jdn - epoch_jdn;
 
-      // Calculate the number of seconds in the years
-      for (int i = year; i < 1970; i++) {
-        t -= (gregorian_is_gleap(i) ? GREGORIAN_LEAP_YEAR_LENGTH_IN_DAYS
-                                    : GREGORIAN_NORMAL_YEAR_LENGTH_IN_DAYS) *
-             G_DAY_LENGTH_IN_SECONDS;
-      }
-    } else { // for years after 1900
+      /* Direct conversion to Unix time_t:
+         Negative values are valid for pre-1970 dates */
+      t = delta_days * 86400L; // Cast to long for 32-bit system safety
+    } else {                   // for years after 1900
       g.tm_hour = 0;
       g.tm_min = 0;
       g.tm_sec = 0;
@@ -221,9 +225,16 @@ int main(int argc, char **argv) {
     setenv("TZ", "Etc/UTC", 1);
     tzset();
 
-    if (!jstrptime(action.gregorian_ptr, "%Y/%m/%d", &j)) {
-      fprintf(stderr, "Specify jalali date in the following format\n");
-      fprintf(stderr, "%%Y/%%m/%%d e.g. 1390/03/25\n");
+    char *endptr_g = jstrptime(action.gregorian_ptr, "%Y/%m/%d", &j);
+
+    int jy = j.tm_year;
+    int jm = j.tm_mon + 1;
+    int jd = j.tm_mday;
+
+    if (!endptr_g || *endptr_g != '\0' || !is_valid_jalali(jy, jm, jd)) {
+      fprintf(stderr,
+              "Specify a Jalali date that exists, in the following format:\n"
+              "%%Y/%%m/%%d e.g. 2017/10/02\n");
       exit(EXIT_FAILURE);
     }
 
