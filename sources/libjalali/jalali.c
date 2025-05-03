@@ -382,6 +382,8 @@ int is_valid_jalali(int year, int month, int day) {
 }
 
 int is_valid_gregorian(int year, int month, int day) {
+  if (year < 622 || (year == 622 && (month < 3 || (month == 3 && day < 22))))
+    return 0;
   if (month < 1 || month > 12)
     return 0;
   if (day < 1)

@@ -185,8 +185,8 @@ int main(int argc, char **argv) {
 
     char *endptr_j = strptime(action.jalali_ptr, "%Y/%m/%d", &g);
 
-    int gy = g.tm_year + 1900;
-    int gm = g.tm_mon + 1;
+    int gy = g.tm_year + 1900; // tm_year: years since 1900
+    int gm = g.tm_mon + 1;     // tm_mon: 0-11 → 1-12
     int gd = g.tm_mday;
 
     if (!endptr_j || *endptr_j != '\0' || !is_valid_gregorian(gy, gm, gd)) {
@@ -196,10 +196,7 @@ int main(int argc, char **argv) {
       exit(EXIT_FAILURE);
     }
 
-    if (g.tm_year < 0) {         // Handle dates before 1900
-      int gy = g.tm_year + 1900; // tm_year: years since 1900
-      int gm = g.tm_mon + 1;     // tm_mon: 0-11 → 1-12
-      int gd = g.tm_mday;
+    if (g.tm_year < 0) { // Handle dates before 1900
 
       /* JDN calculation avoids system-specific mktime limitations
          by using pure mathematical conversion */
