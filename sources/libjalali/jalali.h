@@ -22,6 +22,9 @@
 #ifndef JALALI_H
 #define JALALI_H
 
+#define MAXIMUM_JALALI_YEAR 3000
+#define MAXIMUM_GREGORIAN_YEAR 3621
+
 #include <time.h>
 
 #ifdef __cplusplus

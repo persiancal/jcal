@@ -35,6 +35,10 @@
 #include "../libjalali/jtime.h"
 #include "jdate.h"
 
+#define IS_BEFORE_JALALI_EPOCH(year, month, day)                               \
+  ((year) < 622 ||                                                             \
+   ((year) == 622 && ((month) < 3 || ((month) == 3 && (day) < 22))))
+
 extern char *optarg;
 
 /*
@@ -189,7 +193,8 @@ int main(int argc, char **argv) {
     int gm = g.tm_mon + 1;     // tm_mon: 0-11 → 1-12
     int gd = g.tm_mday;
 
-    if (!endptr_j || *endptr_j != '\0' || !is_valid_gregorian(gy, gm, gd)) {
+    if (!endptr_j || *endptr_j != '\0' || !is_valid_gregorian(gy, gm, gd) ||
+        IS_BEFORE_JALALI_EPOCH(gy, gm, gd)) {
       fprintf(stderr,
               "Specify a Gregorian date that exists, in the following format:\n"
               "%%Y/%%m/%%d e.g. 1366/04/17\n");

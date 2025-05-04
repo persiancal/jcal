@@ -367,6 +367,8 @@ int compute_jdn(int year, int month, int day) {
 // << AI generated code
 
 int is_valid_jalali(int year, int month, int day) {
+  if (year < 1 || year > MAXIMUM_JALALI_YEAR)
+    return 0;
   if (month < 1 || month > 12)
     return 0;
   if (day < 1)
@@ -382,7 +384,7 @@ int is_valid_jalali(int year, int month, int day) {
 }
 
 int is_valid_gregorian(int year, int month, int day) {
-  if (year < 622 || (year == 622 && (month < 3 || (month == 3 && day < 22))))
+  if (year < 1 || year > MAXIMUM_GREGORIAN_YEAR)
     return 0;
   if (month < 1 || month > 12)
     return 0;
