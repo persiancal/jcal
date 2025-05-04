@@ -62,107 +62,23 @@ extern char *tzname[2];
  * In every of these 29, 33 or 37 years long periods starting with year 0,
  * leap years are multiples of four except for year 0 in each period.
  * The current 2820 year period started in the year AP 475 (AD 1096).
+ * https://www.wikifunctions.org/view/en/Z11014
  */
-
 int jalali_is_jleap(int year) {
-
-  /* Leap years from 1200 to 1299 AP */
-  int leap1200[100] = {
-      [10] = 1, [14] = 1, [18] = 1, [22] = 1, [26] = 1, [30] = 1,
-      [34] = 1, [38] = 1, [43] = 1, [47] = 1, [51] = 1, [55] = 1,
-      [59] = 1, [63] = 1, [67] = 1, [71] = 1, [76] = 1, [80] = 1,
-      [84] = 1, [88] = 1, [92] = 1, [96] = 1};
-
-  /* Leap years from 1300 to 1399 AP */
-  int leap1300[100] = {
-      [0] = 1,  [4] = 1,  [9] = 1,  [13] = 1, [17] = 1, [21] = 1, [25] = 1,
-      [29] = 1, [33] = 1, [37] = 1, [42] = 1, [46] = 1, [50] = 1, [54] = 1,
-      [58] = 1, [62] = 1, [66] = 1, [70] = 1, [75] = 1, [79] = 1, [83] = 1,
-      [87] = 1, [91] = 1, [95] = 1, [99] = 1};
-
-  /* Leap years from 1400 to 1499 AP */
-  int leap1400[100] = {
-      [3] = 1,  [8] = 1,  [12] = 1, [16] = 1, [20] = 1, [24] = 1,
-      [28] = 1, [32] = 1, [36] = 1, [41] = 1, [45] = 1, [49] = 1,
-      [53] = 1, [57] = 1, [61] = 1, [65] = 1, [69] = 1, [74] = 1,
-      [78] = 1, [82] = 1, [86] = 1, [90] = 1, [94] = 1};
-
-  int i = year % 100;
-
-  if (year >= 1200 && year <= 1299) {
-    if (leap1200[i] == 1)
-      return 1;
-    else
-      return 0;
-  } else if (year >= 1300 && year <= 1399) {
-    if (leap1300[i] == 1)
-      return 1;
-    else
-      return 0;
-  } else if (year >= 1400 && year <= 1499) {
-    if (leap1400[i] == 1)
-      return 1;
-    else
-      return 0;
+  // handle the only leap year before 9 that the algorithm can't figure out
+  if (year <= 5) {
+    int mod = year % 4;
+    return (mod == 0);
   }
 
-  /* Keeping the old algorithm as fallback */
-
-  int pr = year;
-
-  /* Shifting ``year'' with 2820 year period epoch. */
-  pr -= JALALI_LEAP_BASE;
-
-  pr %= JALALI_LEAP_PERIOD;
-
-  /*
-   * According to C99 standards, modulo operator's result has the same sign
-   * as dividend. Since what we require to process has to be in range
-   * 0-2819, we have to shift the remainder to be positive if dividend is
-   * negative.
-   */
-  if (pr < 0) {
-    pr += JALALI_LEAP_PERIOD;
-  }
-
-  /*
-   * Every cycle consists of one 29 year period and three identical 33 year
-   * periods forming a 128 years length cycle. An exception applies to the
-   * last cycle being 132 years instead and it's last 33 years long partition
-   * will be extended for an extra 4 years thus becoming 37 years long.
-   * JALALI_LAST_CYCLE_START literally marks the beginning of this last
-   * cycle.
-   */
-
-  pr = (pr > JALALI_LAST_CYCLE_START) ? (pr - JALALI_LAST_CYCLE_START)
-                                      : pr % JALALI_NORMAL_CYCLE_LENGTH;
-
-  /*
-   * Classifying year in a cycle. Assigning to one of the four partitions.
-   */
-
-  for (i = 0; i < J_LI; i++) {
-    if ((pr >= cycle_patterns[i]) && (pr < cycle_patterns[i + 1])) {
-      pr -= cycle_patterns[i];
-      /* Handling year-0 exception */
-      if (!pr) /* pr is zero */
-        return 0;
-      /*
-       * If year is a multiple of four then it's leap,
-       * ordinary otherwise.
-       */
-      else
-        return !(pr % J_LI);
-    }
-  }
-
-  /*
-   * Our code flow better not reach this fail-safe
-   * return statement and I really mean it.
-   */
-  return 0;
+  int mod = year % 33;
+  return (mod == 1 || mod == 5 || mod == 9 || mod == 13 || mod == 17 ||
+          mod == 22 || mod == 26 || mod == 30);
 }
 
+int gregorian_is_gleap(int year) {
+  return (year % 4 == 0) && !(year % 100 == 0 && year % 400 != 0);
+}
 /*
  * Creates absolute values for day, hour, minute and seconds from time_t.
  * Values are signed integers.
@@ -172,13 +88,7 @@ void jalali_create_time_from_secs(time_t t, struct ab_jtm *d) {
                         : ((t - (time_t)J_DAY_LENGTH_IN_SECONDS + (time_t)1) /
                            (time_t)J_DAY_LENGTH_IN_SECONDS);
 
-  if (t >= 0) {
-    t %= (time_t)J_DAY_LENGTH_IN_SECONDS;
-  } else {
-    t = (J_DAY_LENGTH_IN_SECONDS -
-         (abs(t - J_DAY_LENGTH_IN_SECONDS) % J_DAY_LENGTH_IN_SECONDS)) %
-        J_DAY_LENGTH_IN_SECONDS;
-  }
+  t %= (time_t)J_DAY_LENGTH_IN_SECONDS;
 
   d->ab_hour = t / J_HOUR_LENGTH_IN_SECONDS;
   t %= J_HOUR_LENGTH_IN_SECONDS;
@@ -346,40 +256,26 @@ void jalali_get_date(int p, struct jtm *j) {
  */
 int jalali_get_diff(const struct jtm *j) {
   int p = 0;
-  int i;
-  int s, sd;
-  int e, ed;
-  int f = 1;
 
-  if (j->tm_yday > 365 || j->tm_yday < 0)
-    return -1;
-
-  if (j->tm_year == J_UTC_EPOCH_YEAR) {
-    p = j->tm_yday - J_UTC_EPOCH_DIFF;
-    return p;
-  } else if (j->tm_year > J_UTC_EPOCH_YEAR) {
-    s = J_UTC_EPOCH_YEAR + 1;
-    sd = J_UTC_EPOCH_DIFF;
-    e = j->tm_year - 1;
-    ed = j->tm_yday + 1;
+  if (j->tm_year >= J_UTC_EPOCH_YEAR) {
+    for (int i = J_UTC_EPOCH_YEAR; i < j->tm_year; i++) {
+      p += jalali_is_jleap(i) ? JALALI_LEAP_YEAR_LENGTH_IN_DAYS
+                              : JALALI_NORMAL_YEAR_LENGTH_IN_DAYS;
+    }
+    if (j->tm_yday > J_UTC_EPOCH_DIFF)
+      p += j->tm_yday - J_UTC_EPOCH_DIFF;
+    else
+      p -= J_UTC_EPOCH_DIFF - j->tm_yday;
   } else {
-    f = -1;
-    s = j->tm_year + 1;
-    sd = j->tm_yday;
-    e = J_UTC_EPOCH_YEAR - 1;
-    ed = J_UTC_EPOCH_DIFF + 1;
+    for (int i = j->tm_year; i < J_UTC_EPOCH_YEAR; i++) {
+      p -= jalali_is_jleap(i) ? JALALI_LEAP_YEAR_LENGTH_IN_DAYS
+                              : JALALI_NORMAL_YEAR_LENGTH_IN_DAYS;
+    }
+    if (j->tm_yday < J_UTC_EPOCH_DIFF)
+      p -= J_UTC_EPOCH_DIFF - j->tm_yday;
+    else
+      p += j->tm_yday - J_UTC_EPOCH_DIFF;
   }
-
-  for (i = s; i <= e; i++) {
-    p += jalali_is_jleap(i) ? JALALI_LEAP_YEAR_LENGTH_IN_DAYS
-                            : JALALI_NORMAL_YEAR_LENGTH_IN_DAYS;
-  }
-
-  int r = jalali_is_jleap(s) ? JALALI_LEAP_YEAR_LENGTH_IN_DAYS - sd - 1
-                             : JALALI_NORMAL_YEAR_LENGTH_IN_DAYS - sd - 1;
-
-  p += r + ed;
-  p *= f;
 
   return p;
 }
@@ -446,4 +342,64 @@ void jalali_show_time(const struct jtm *j) {
          j->tm_mday, j->tm_hour, j->tm_min, j->tm_sec, j->tm_wday);
   printf(" yday: %d, dst: %d, off: %ld, zone: %s\n", j->tm_yday, j->tm_isdst,
          j->tm_gmtoff, j->tm_zone);
+}
+
+// AI generated code >>
+/* Julian Day Number (JDN) calculation for Gregorian calendar
+Formula from Jean Meeus' "Astronomical Algorithms" */
+int compute_jdn(int year, int month, int day) {
+  /* Magic numbers explanation:
+     - 4800: Year adjustment for algorithm's epoch
+     - 14/12: Converts month to March-based year (0=Mar, 11=Feb)
+     - 153: Days in 5 months (30.6 average) for March-based calendar
+     - 32045: JDN offset for Gregorian calendar alignment */
+  int a = (14 - month) / 12;  // March-based year adjustment (0 or 1)
+  int y = year + 4800 - a;    // Adjusted year for algorithm
+  int m = month + 12 * a - 3; // Convert month to March-based (0-11)
+
+  return day + (153 * m + 2) / 5 // Day count from March-based months
+         + 365 * y               // Add non-leap days
+         + y / 4                 // Julian leap years
+         - y / 100               // Gregorian century adjustment
+         + y / 400               // Gregorian leap year exception
+         - 32045;                // Offset to match Gregorian JDN
+}
+// << AI generated code
+
+int is_valid_jalali(int year, int month, int day) {
+  if (year < 1 || year > MAXIMUM_JALALI_YEAR)
+    return 0;
+  if (month < 1 || month > 12)
+    return 0;
+  if (day < 1)
+    return 0;
+  int days_in_month;
+  if (month <= 6)
+    days_in_month = 31;
+  else if (month <= 11)
+    days_in_month = 30;
+  else
+    days_in_month = jalali_is_jleap(year) ? 30 : 29;
+  return day <= days_in_month;
+}
+
+int is_valid_gregorian(int year, int month, int day) {
+  if (year < 1 || year > MAXIMUM_GREGORIAN_YEAR)
+    return 0;
+  if (month < 1 || month > 12)
+    return 0;
+  if (day < 1)
+    return 0;
+  int days_in_month;
+  if (month == 2) {
+    if (gregorian_is_gleap(year))
+      days_in_month = 29;
+    else
+      days_in_month = 28;
+  } else if (month == 4 || month == 6 || month == 9 || month == 11) {
+    days_in_month = 30;
+  } else {
+    days_in_month = 31;
+  }
+  return day <= days_in_month;
 }
