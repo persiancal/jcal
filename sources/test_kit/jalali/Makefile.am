@@ -1,4 +1,4 @@
-bin_PROGRAMS = elc get_date get_diff jalali_update jyinfo leap sec_converter
+bin_PROGRAMS = elc get_date get_diff jalali_update jyinfo leap sec_converter leap_range
 
 INCLUDES = -I${top_srcdir}/libjalali
 
@@ -11,6 +11,7 @@ get_diff_SOURCES = get_diff.c
 jalali_update_SOURCES = jalali_update.c
 jyinfo_SOURCES = jyinfo.c
 leap_SOURCES = leap.c
+leap_range_SOURCES = leap_range.c
 sec_converter_SOURCES = sec_converter.c
 
 LDADD           = ../../libjalali/libjalali.la

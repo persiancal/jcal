@@ -7,6 +7,7 @@ sources/test_kit/jalali/jyinfo
 sources/test_kit/jalali/leap
 sources/test_kit/jalali/sec_converter
 sources/test_kit/jalali/jalali_update
+sources/test_kit/jalali/leap_range
 sources/test_kit/jtime/jasctime
 sources/test_kit/jtime/jctime
 sources/test_kit/jtime/jgmtime
@@ -25,6 +26,7 @@ config.log
 config.status
 config.sub
 configure
+configure~
 depcomp
 install-sh
 missing
@@ -41,3 +43,4 @@ docs/genpages.sh
 sources/compile
 *.pyc
 *.swp
+.DS_Store
