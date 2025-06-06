@@ -1,7 +1,5 @@
 # jcal
 
-====
-
 <a href="https://repology.org/project/jcal/versions">
     <img src="https://repology.org/badge/vertical-allrepos/jcal.svg" alt="Packaging status" align="right">
 </a>
